@@ -51,7 +51,7 @@ const decodeLisudokuInline = (dataString: string) => {
     }
   }
 
-  const constraints = {
+  const constraints: LisudokuConstraints = {
     ...defaultConstraints(filteredConstraints.gridSize),
     ...filteredConstraints,
   }
@@ -77,8 +77,7 @@ const matchStaticUrls = (input: string): MatchResult => {
   return {
     matched: true,
     dataString,
-    constraints: result.constraints,
-    error: result.error,
+    ...result,
   }
 }
 
@@ -94,8 +93,7 @@ const matchDataString = (input: string): MatchResult => {
   return {
     matched: true,
     dataString: input,
-    constraints: result.constraints,
-    error: result.error,
+    ...result,
   }
 }
 
