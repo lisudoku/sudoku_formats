@@ -36,7 +36,7 @@ const decodeLisudokuInline = (dataString: string) => {
 
   let parsedConstraints = undefined
   try {
-    parsedConstraints = JSON.parse(constraintsStr!)
+    parsedConstraints = JSON.parse(constraintsStr)
   } catch (e) {
     return {
       error: 'Error while parsing constraint json',
