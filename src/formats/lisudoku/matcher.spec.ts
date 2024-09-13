@@ -166,6 +166,7 @@ export const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
   topBottom: false,
   renbans: [],
 }
+const LISUDOKU_DB_PUZZLE_URL = 'https://lisudoku.xyz/p/uWwScbyWCyHXi2kbL3LY'
 
 test('detects lisudoku puzzle with solver url', async () => {
   const result = await matcher.run(LISUDOKU_SOLVER_URL)
@@ -200,6 +201,15 @@ test('detects grid string', async () => {
     matched: true,
     dataString: GRID_STRING,
     constraints: LISUDOKU_GRID_STRING_CONSTRAINTS,
+  })
+})
+
+test('detects lisudoku puzzle by id', async () => {
+  const result = await matcher.run(LISUDOKU_DB_PUZZLE_URL)
+  expect(result).toEqual({
+    matched: true,
+    dataString: '',
+    constraints: expect.objectContaining({ gridSize: 9 }),
   })
 })
 
