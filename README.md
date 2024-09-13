@@ -5,7 +5,7 @@ Convert between different sudoku formats (lisudoku, f-puzzles etc).
 See it in action on the [lisudoku solver](http://lisudoku.xyz/solver) page through the import button.
 
 ```
-import { decodeSudoku } from 'sudoku-formats'
+import { decodeSudoku, getAllFormats } from 'sudoku-formats'
 
 // Parse grid string
 decodeSudoku('1000020000300004').then(({ constraints }) => {
@@ -31,6 +31,8 @@ console.log(error) // undefined
 // Handling errors
 const { error } = await decodeSudoku('123');
 console.log(error) // 'Error while parsing inline data'
+
+console.log(getAllFormats()) // [{ format: 'lisudoku', urlPatterns: ... }, ...]
 ```
 
 ## Supported formats
