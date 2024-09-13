@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 import { decodeSudoku } from './decodeSudoku';
 import { SudokuDataFormat } from './types';
 import { GRID_STRING, LISUDOKU_CONSTRAINTS, LISUDOKU_DATA_STRING, LISUDOKU_GRID_STRING_CONSTRAINTS, LISUDOKU_SOLVER_INVALID_URL, LISUDOKU_SOLVER_URL } from './formats/lisudoku/matcher.spec';
+import { FPUZZLES_CONSTRAINTS, FPUZZLES_DATA_STRING, FPUZZLES_URL } from './formats/fpuzzles/matcher.spec';
 
 test('detects that it is a lisudoku puzzle', async () => {
   const result = await decodeSudoku(LISUDOKU_SOLVER_URL)
@@ -12,7 +13,13 @@ test('detects that it is a lisudoku puzzle', async () => {
   })
 })
 
-test.todo('detects that it is an f-puzzles puzzle', () => {
+test('detects that it is an f-puzzles puzzle', async () => {
+  const result = await decodeSudoku(FPUZZLES_URL)
+  expect(result).toEqual({
+    format: SudokuDataFormat.Fpuzzles,
+    dataString: FPUZZLES_DATA_STRING,
+    constraints: FPUZZLES_CONSTRAINTS,
+  })
 })
 
 test('returns error if matcher returns error', async () => {
@@ -50,7 +57,13 @@ test('ignores leading or trailing whitespace', async () => {
   })
 })
 
-test.todo('detects that it is an fpuzzles data string', async () => {
+test('detects that it is an fpuzzles data string', async () => {
+  const result = await decodeSudoku(FPUZZLES_DATA_STRING)
+  expect(result).toEqual({
+    format: SudokuDataFormat.Fpuzzles,
+    dataString: FPUZZLES_DATA_STRING,
+    constraints: FPUZZLES_CONSTRAINTS,
+  })
 })
 
 test('detects that it is a grid string', async () => {
@@ -62,6 +75,12 @@ test('detects that it is a grid string', async () => {
   })
 })
 
-test.todo('works with url redirects', async () => {
-  // fpuzzles id url
+test('works with url redirects', async () => {
+  // The below url redirects to https://f-puzzles.com/?load=N4Igzgl....
+  const result = await decodeSudoku('http://tinyurl.com/29ky3dfn')
+  expect(result).toEqual({
+    format: SudokuDataFormat.Fpuzzles,
+    dataString: expect.stringMatching(/^N4Igzgl/),
+    constraints: expect.anything(),
+  })
 })

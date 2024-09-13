@@ -6,7 +6,7 @@ import { matchers } from './formats'
  * @param {string} input - Either a url or a data string
  * @returns {Promise<DecodeOutput>} Promise object that represents the parsing operation result
  */
-export const decodeSudoku = async (input: string): Promise<DecodeOutput> => {
+export const decodeSudoku = async (input: string, followRedirects = true): Promise<DecodeOutput> => {
   const processedInput = input.trim()
 
   let result: MatchResult | undefined
@@ -19,9 +19,24 @@ export const decodeSudoku = async (input: string): Promise<DecodeOutput> => {
     }
   }
 
-  // TODO: if no matches try url redirects
-
   if (result === undefined || result.error !== undefined || format === undefined) {
+    // No matcheso on the input
+
+    if (followRedirects) {
+      // Maybe this url redirects to something that matches
+      try {
+        const url = new URL(processedInput)
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+          const response = await fetch(url)
+          if (response.redirected) {
+            return decodeSudoku(response.url, false)
+          }
+        }
+      } catch (_) {
+        // continue and return no match
+      }
+    }
+
     return {
       error: result?.error || 'Format not supported',
       format,

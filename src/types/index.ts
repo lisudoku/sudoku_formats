@@ -1,3 +1,4 @@
+import { FpuzzlesConstraints } from '../formats/fpuzzles';
 import { LisudokuConstraints } from '../formats/lisudoku';
 
 export enum SudokuDataFormat {
@@ -5,7 +6,7 @@ export enum SudokuDataFormat {
   Fpuzzles = 'fpuzzles',
 }
 
-type Constraints = LisudokuConstraints
+type Constraints = LisudokuConstraints | FpuzzlesConstraints
 
 interface DecodeOutputSuccess {
   format: SudokuDataFormat;
