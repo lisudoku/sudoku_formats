@@ -1,14 +1,19 @@
 {
   "name": "sudoku-formats",
   "version": "1.0.0",
-  "description": "Convert between different sudoku formats (lisudoku, f-puzzles)",
+  "description": "Convert between different sudoku formats (lisudoku, fpuzzles)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/lisudoku/sudoku_formats",
-  "license": "AGPL-3.0",
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "George Marcus",
+    "email": "george.marcus922@gmail.com"
+  },
   "files": [
     "dist"
   ],
+  "keywords": ["sudoku", "formats", "convert", "lisudoku", "fpuzzles"],
   "dependencies": {
     "lodash-es": "^4.17.21",
     "lz-string": "^1.5.0"
