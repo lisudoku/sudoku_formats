@@ -1,10 +1,10 @@
 import { Encoder, FormatsToConstraints, SudokuDataFormat, Transformer } from '../types'
-import { matcher as lisudokuMatcher, transformer as lisudokuTransformer, encoder as lisudokuEncoder } from './lisudoku'
-import { matcher as fpuzzlesMatcher, transformer as fpuzzlesTransformer, encoder as fpuzzlesEncoder } from './fpuzzles'
+import { decoder as lisudokuDecoder, transformer as lisudokuTransformer, encoder as lisudokuEncoder } from './lisudoku'
+import { decoder as fpuzzlesDecoder, transformer as fpuzzlesTransformer, encoder as fpuzzlesEncoder } from './fpuzzles'
 
-export const matchers = [
-  lisudokuMatcher,
-  fpuzzlesMatcher,
+export const decoders = [
+  lisudokuDecoder,
+  fpuzzlesDecoder,
 ]
 
 export const transformers: { [F in SudokuDataFormat]: Transformer<FormatsToConstraints[F]> } = {

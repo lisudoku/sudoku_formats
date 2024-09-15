@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { matcher } from './matcher'
+import { decoder } from './decoder'
 import { FpuzzlesConstraints } from './types';
 
 export const FPUZZLES_DATA_STRING = 'N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSTQMY0IB7AOwQAYLXz3iBdZQty6uo3gBGVADcAhgBsArnBGoaYmEIAuGORRCTZ8gEyKIytRphadchAGZDxhOs0c+Rbryfuyn1q68fnTn39fYO8eEL8/QIjwryiYoNC3eOiXbhBsCAk0BmkAantTVAysnKkAWgK5VAl6VQgAa3oINAALVUqYatqGiHo0DtQYAA91CSoaBnxQAGMYKSkwfBAAJQBWAGE9EFQ19attlY2AFgPlgDY904uTnYB2S7v1m5X71dOADnW3zhdUWmxcPBCCBZvMEC91sIQL8QDA7ECZnMpODlp8oTDVC0YBgALa0HEwVTYqYgKS9GCLIF4FbCdZnU6024M9bvU56daIU5WDkgTg/NIZABmguxKlmJNBCyWy0QT1Osu+WkllOpMrp8q+vJhGAkdVoEqRKpWsqZO1lrJ+pBBhulss5ZpZWrSYwwtAA7iSyfQKfhVUd1Tt/aaVv7WTsNmGVhdI8t7ha0srpf63oH1fyiEA='
@@ -37,7 +37,7 @@ export const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
 export const FPUZZLES_INVALID_URL = 'https://f-puzzles.com/?load=1234'
 
 test('detects fpuzzles puzzle with url', async () => {
-  const result = await matcher.run(FPUZZLES_URL)
+  const result = await decoder.run(FPUZZLES_URL)
   expect(result).toEqual({
     matched: true,
     dataString: FPUZZLES_DATA_STRING,
@@ -46,7 +46,7 @@ test('detects fpuzzles puzzle with url', async () => {
 })
 
 test('detects fpuzzles data string', async () => {
-  const result = await matcher.run(FPUZZLES_DATA_STRING)
+  const result = await decoder.run(FPUZZLES_DATA_STRING)
   expect(result).toEqual({
     matched: true,
     dataString: FPUZZLES_DATA_STRING,
@@ -55,7 +55,7 @@ test('detects fpuzzles data string', async () => {
 })
 
 test('invalid fpuzzles data should return error', async () => {
-  const result = await matcher.run(FPUZZLES_INVALID_URL)
+  const result = await decoder.run(FPUZZLES_INVALID_URL)
   expect(result).toEqual({
     matched: true,
     dataString: '1234',
@@ -64,7 +64,7 @@ test('invalid fpuzzles data should return error', async () => {
 })
 
 test('invalid fpuzzles url should not match', async () => {
-  const result = await matcher.run('https://fpuzzl3s.com/?load=1234')
+  const result = await decoder.run('https://fpuzzl3s.com/?load=1234')
   expect(result).toEqual({
     matched: false,
   })
@@ -72,7 +72,7 @@ test('invalid fpuzzles url should not match', async () => {
 
 test('invalid fpuzzles constraints schema should return error', async () => {
   // data string contains the json {"x":3}
-  const result = await matcher.run('https://f-puzzles.com/?load=N4IgHiBcDMC+Q===')
+  const result = await decoder.run('https://f-puzzles.com/?load=N4IgHiBcDMC+Q===')
   expect(result).toEqual({
     matched: true,
     dataString: 'N4IgHiBcDMC+Q===',

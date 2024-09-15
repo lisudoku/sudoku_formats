@@ -1,6 +1,6 @@
-import { matchers } from './formats'
+import { decoders } from './formats'
 
-export const getAllFormats = () => matchers.map(({ format, urlPatterns }) => ({
+export const getAllFormats = () => decoders.map(({ format, urlPatterns }) => ({
   format,
   urlPatterns,
 }))

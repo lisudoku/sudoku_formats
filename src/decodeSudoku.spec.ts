@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 import { decodeSudoku } from './decodeSudoku';
 import { SudokuDataFormat } from './types';
-import { GRID_STRING, LISUDOKU_CONSTRAINTS, LISUDOKU_DATA_STRING, LISUDOKU_GRID_STRING_CONSTRAINTS, LISUDOKU_SOLVER_INVALID_URL, LISUDOKU_SOLVER_URL } from './formats/lisudoku/matcher.spec';
-import { FPUZZLES_CONSTRAINTS, FPUZZLES_DATA_STRING, FPUZZLES_URL } from './formats/fpuzzles/matcher.spec';
+import { GRID_STRING, LISUDOKU_CONSTRAINTS, LISUDOKU_DATA_STRING, LISUDOKU_GRID_STRING_CONSTRAINTS, LISUDOKU_SOLVER_INVALID_URL, LISUDOKU_SOLVER_URL } from './formats/lisudoku/decoder.spec';
+import { FPUZZLES_CONSTRAINTS, FPUZZLES_DATA_STRING, FPUZZLES_URL } from './formats/fpuzzles/decoder.spec';
 
 test('detects that it is a lisudoku puzzle', async () => {
   const result = await decodeSudoku(LISUDOKU_SOLVER_URL)
@@ -22,7 +22,7 @@ test('detects that it is an f-puzzles puzzle', async () => {
   })
 })
 
-test('returns error if matcher returns error', async () => {
+test('returns error if decoder returns error', async () => {
   const result = await decodeSudoku(LISUDOKU_SOLVER_INVALID_URL)
   expect(result).toEqual({
     error: expect.any(String),

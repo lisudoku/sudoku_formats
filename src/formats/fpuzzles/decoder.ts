@@ -1,5 +1,5 @@
 import { decompressFromBase64 } from 'lz-string'
-import { Matcher, MatcherRunFn, MatchResult, SudokuDataFormat } from '../../types';
+import { Decoder, DecoderRunFn, MatchResult, SudokuDataFormat } from '../../types';
 import { FpuzzlesConstraints } from './types';
 
 const FPUZZLES_INLINE_DATA_REGEX = /^(?:https:\/\/)?(?:www\.)?f-puzzles\.com\/\?load=(.+)$/
@@ -74,7 +74,7 @@ const matchDataString = (input: string): MatchResult => {
   }
 }
 
-const run: MatcherRunFn = async (input: string) => {
+const run: DecoderRunFn = async (input: string) => {
   let result = matchStaticUrls(input);
   if (result.matched) {
     return result
@@ -90,7 +90,7 @@ const run: MatcherRunFn = async (input: string) => {
   }
 }
 
-export const matcher: Matcher = {
+export const decoder: Decoder = {
   format: SudokuDataFormat.Fpuzzles,
   urlPatterns: URL_PATTERNS,
   run,

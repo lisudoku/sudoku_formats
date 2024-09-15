@@ -76,12 +76,12 @@ interface MatchResultNoMatch {
 
 export type MatchResult = MatchResultSuccess | MatchResultError | MatchResultNoMatch
 
-export type MatcherRunFn = (input: string) => Promise<MatchResult>
+export type DecoderRunFn = (input: string) => Promise<MatchResult>
 
-export interface Matcher {
+export interface Decoder {
   format: SudokuDataFormat
   urlPatterns: RegExp[]
-  run: MatcherRunFn
+  run: DecoderRunFn
 }
 
 export interface Transformer<C> {

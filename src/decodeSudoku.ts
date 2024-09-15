@@ -1,5 +1,5 @@
 import { DecodeOutput, MatchResult } from './types'
-import { matchers } from './formats'
+import { decoders } from './formats'
 
 /**
  * Function that parses a sudoku puzzle url into its object representation
@@ -11,10 +11,10 @@ export const decodeSudoku = async (input: string, followRedirects = true): Promi
 
   let result: MatchResult | undefined
   let format
-  for (const matcher of matchers) {
-    result = await matcher.run(processedInput)
+  for (const decoder of decoders) {
+    result = await decoder.run(processedInput)
     if (result.matched) {
-      format = matcher.format
+      format = decoder.format
       break
     }
   }

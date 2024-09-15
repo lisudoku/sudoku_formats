@@ -1,5 +1,5 @@
 import { decompressFromBase64 } from 'lz-string'
-import { Matcher, MatcherRunFn, MatchResult, SudokuDataFormat } from '../../types';
+import { Decoder, DecoderRunFn, MatchResult, SudokuDataFormat } from '../../types';
 import { LisudokuConstraints } from './types';
 import { camelCaseKeys, defaultConstraints, gridSizeFromString, gridStringToFixedNumbers, isGridString } from './utils';
 
@@ -92,7 +92,7 @@ const matchDataString = (input: string): MatchResult => {
   }
 }
 
-const matchDbUrl: MatcherRunFn = async (input: string) => {
+const matchDbUrl: DecoderRunFn = async (input: string) => {
   let match = input.match(LISUDOKU_DB_PUZZLE_REGEX)
   if (!match) {
     return {
@@ -131,7 +131,7 @@ const matchDbUrl: MatcherRunFn = async (input: string) => {
   }
 }
 
-const run: MatcherRunFn = async (input: string) => {
+const run: DecoderRunFn = async (input: string) => {
   let result = matchStaticUrls(input);
   if (result.matched) {
     return result
@@ -145,7 +145,7 @@ const run: MatcherRunFn = async (input: string) => {
   return matchDbUrl(input);
 }
 
-export const matcher: Matcher = {
+export const decoder: Decoder = {
   format: SudokuDataFormat.Lisudoku,
   urlPatterns: URL_PATTERNS,
   run,
