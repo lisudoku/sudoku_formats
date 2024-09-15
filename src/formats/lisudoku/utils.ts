@@ -1,4 +1,4 @@
-import { camelCase, flatten, flattenDeep, isEmpty, isEqual, times } from 'lodash-es'
+import { camelCase, flatten, flattenDeep, isBoolean, isEmpty, isEqual, isNumber, omitBy, times } from 'lodash-es'
 import { CellPosition, FixedNumber, Grid, LisudokuConstraints, Region, SudokuVariant } from './types'
 
 // TODO: deduplicate copy-pasted code from lisudou_frontend
@@ -213,4 +213,17 @@ export const regionGridToRegions = (gridSize: number, regionGrid: Grid): Region[
     })
   })
   return regions
+}
+
+// This one is original :)
+export const normalizeConstraints = (constraints: LisudokuConstraints): LisudokuConstraints => {
+  const filteredConstraints = omitBy(
+    constraints,
+    value => !isNumber(value) &&
+             (value === false || (!isBoolean(value) && isEmpty(value)))
+  ) as LisudokuConstraints
+  if (isEqual(filteredConstraints.regions, ensureDefaultRegions(constraints.gridSize))) {
+    delete filteredConstraints.regions
+  }
+  return filteredConstraints
 }

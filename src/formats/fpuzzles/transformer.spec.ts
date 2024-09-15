@@ -119,14 +119,12 @@ const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
     {dotType: KropkiDotType.Double, cell1:{"row":8,"col":6},cell2:{"row":8,"col":7}},
     {dotType: KropkiDotType.Double, cell1:{"row":8,"col":8},"cell2":{"row":8,"col":7}},
   ],
-  kropkiNegative: false,
   primaryDiagonal: true,
   secondaryDiagonal: true,
   antiKnight: true,
   antiKing: true,
   oddCells: [{ row: 6, col: 0 }],
   evenCells: [{ row: 7, col: 0 }],
-  topBottom: false,
 }
 
 test('transformToLisudoku', () => {

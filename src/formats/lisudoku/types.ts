@@ -41,7 +41,7 @@ export type Renban = CellPosition[]
 
 export type LisudokuConstraints = {
   gridSize: number
-  regions: Region[]
+  regions?: Region[]
   fixedNumbers?: FixedNumber[]
   extraRegions?: Region[]
   thermos?: Thermo[]

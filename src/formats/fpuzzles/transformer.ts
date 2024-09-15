@@ -2,7 +2,7 @@ import { flatMap, isEmpty, minBy, times } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
 import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
-import { ensureDefaultRegions, GRID_SIZES, regionGridToRegions, regionsToRegionGrid } from '../lisudoku/utils'
+import { ensureDefaultRegions, GRID_SIZES, normalizeConstraints, regionGridToRegions, regionsToRegionGrid } from '../lisudoku/utils'
 import { FpuzzlesConstraints, Grid as FGrid } from './types'
 import { encoder as fpuzzlesEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
@@ -127,9 +127,11 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
     // renbans: constraints.renban
   }
 
+  const normalizedConstraints = normalizeConstraints(newConstraints)
+
   const result: TransformOutput<LisudokuConstraints> = {
-    constraints: newConstraints,
-    ...lisudokuEncoder(newConstraints)
+    constraints: normalizedConstraints,
+    ...lisudokuEncoder(normalizedConstraints)
   }
 
   if (ignoredConstraints.length > 0) {
@@ -142,8 +144,8 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
 const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutput<FpuzzlesConstraints> => {
   const gridSize = constraints.gridSize
   const grid: FGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null).map(() => ({})))
-  const regionGrid = regionsToRegionGrid(gridSize, constraints.regions)
   const defaultRegions = ensureDefaultRegions(gridSize)
+  const regionGrid = regionsToRegionGrid(gridSize, constraints.regions ?? defaultRegions)
   const defaultRegionGrid = regionsToRegionGrid(gridSize, defaultRegions)
   times(gridSize, row => {
     times(gridSize, col => {

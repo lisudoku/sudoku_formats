@@ -1,6 +1,6 @@
 {
   "name": "sudoku-formats",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Convert between different sudoku formats (lisudoku, fpuzzles)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

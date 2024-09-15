@@ -19,6 +19,6 @@ export const transformSudoku = <FFrom extends SudokuDataFormat, FTo extends Sudo
 
   return {
     ...result2,
-    warning: compact([result1.warning, result2.warning]).join('. '),
+    warning: compact([result1.warning, result2.warning]).join('. ') || undefined,
   }
 }
