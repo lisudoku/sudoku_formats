@@ -19,6 +19,7 @@ type Arrow = {
 
 type KropkiDot = {
   cells: [Cell, Cell]
+  value?: number
 }
 
 type GridCell = {
@@ -27,7 +28,12 @@ type GridCell = {
   given?: boolean
 }
 
-type Grid = GridCell[][]
+export type Grid = GridCell[][]
+
+type KillerCage = {
+  cells: Cell[]
+  value?: string
+}
 
 export type FpuzzlesConstraints = {
   size: number
@@ -43,4 +49,8 @@ export type FpuzzlesConstraints = {
   ratio?: KropkiDot[]
   odd?: ParityCell[]
   even?: ParityCell[]
+  killercage?: KillerCage[]
+  nonconsecutive?: boolean
+  negative?: string[] // could be further restricted if I figure out all the values :)
+  disjointgroups?: boolean
 }

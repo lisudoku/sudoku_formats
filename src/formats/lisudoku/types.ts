@@ -58,3 +58,20 @@ export type LisudokuConstraints = {
   topBottom?: boolean
   renbans?: Renban[]
 }
+
+export enum SudokuVariant {
+  Classic = 'classic',
+  Thermo = 'thermo',
+  Killer = 'killer',
+  Arrow = 'arrow',
+  Irregular = 'irregular',
+  Kropki = 'kropki',
+  TopBottom = 'topbot',
+  Diagonal = 'diagonal',
+  Mixed = 'mixed',
+  AntiKnight = 'antiknight',
+  AntiKing = 'antiking',
+  ExtraRegions = 'extraregions',
+  OddEven = 'oddeven',
+  Renban = 'renban',
+}

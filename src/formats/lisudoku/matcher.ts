@@ -51,13 +51,8 @@ const decodeLisudokuInline = (dataString: string) => {
     }
   }
 
-  const constraints: LisudokuConstraints = {
-    ...defaultConstraints(filteredConstraints.gridSize),
-    ...filteredConstraints,
-  }
-
   return {
-    constraints,
+    constraints: filteredConstraints,
   }
 }
 

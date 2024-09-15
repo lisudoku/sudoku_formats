@@ -1,9 +1,9 @@
-import { camelCase, flatten, flattenDeep, times } from 'lodash-es'
-import { CellPosition, FixedNumber, Grid, LisudokuConstraints, Region } from './types'
+import { camelCase, flatten, flattenDeep, isEmpty, isEqual, times } from 'lodash-es'
+import { CellPosition, FixedNumber, Grid, LisudokuConstraints, Region, SudokuVariant } from './types'
 
 // TODO: deduplicate copy-pasted code from lisudou_frontend
 
-const GRID_SIZES = [ 4, 6, 9 ]
+export const GRID_SIZES = [ 4, 6, 9 ]
 
 const changeKeys = (obj: any, keyChangeFn: (string?: string) => string): any => {
   if (Array.isArray(obj)) {
@@ -32,24 +32,9 @@ const computeRegionSizes = (gridSize: number) => {
   }
 }
 
-export const defaultConstraints = (gridSize: number): Required<LisudokuConstraints> => ({
+export const defaultConstraints = (gridSize: number): LisudokuConstraints => ({
   gridSize,
-  fixedNumbers: [],
   regions: ensureDefaultRegions(gridSize),
-  extraRegions: [],
-  thermos: [],
-  arrows: [],
-  killerCages: [],
-  kropkiDots: [],
-  kropkiNegative: false,
-  primaryDiagonal: false,
-  secondaryDiagonal: false,
-  antiKnight: false,
-  antiKing: false,
-  oddCells: [],
-  evenCells: [],
-  topBottom: false,
-  renbans: [],
 })
 
 export const gridSizeFromString: (gridString: string) => number = (gridString: string) => (
@@ -131,4 +116,101 @@ export const ensureDefaultRegions = (gridSize: number): Region[] => {
   )
 
   return defaultRegions
+}
+
+export const detectVariant = (constraints: LisudokuConstraints | null) => {
+  if (constraints === null) {
+    return SudokuVariant.Classic
+  }
+  const variants = []
+  if (!isEmpty(constraints.thermos)) {
+    variants.push(SudokuVariant.Thermo)
+  }
+  if (!isEmpty(constraints.arrows)) {
+    variants.push(SudokuVariant.Arrow)
+  }
+  if (constraints.primaryDiagonal || constraints.secondaryDiagonal) {
+    variants.push(SudokuVariant.Diagonal)
+  }
+  if (constraints.antiKnight) {
+    variants.push(SudokuVariant.AntiKnight)
+  }
+  if (constraints.antiKing) {
+    variants.push(SudokuVariant.AntiKing)
+  }
+  if (!isEqual(constraints.regions, ensureDefaultRegions(constraints.gridSize))) {
+    variants.push(SudokuVariant.Irregular)
+  }
+  if (!isEmpty(constraints.killerCages)) {
+    variants.push(SudokuVariant.Killer)
+  }
+  if (!isEmpty(constraints.kropkiDots)) {
+    variants.push(SudokuVariant.Kropki)
+  }
+  if (!isEmpty(constraints.extraRegions)) {
+    variants.push(SudokuVariant.ExtraRegions)
+  }
+  if (!isEmpty(constraints.oddCells) || !isEmpty(constraints.evenCells)) {
+    variants.push(SudokuVariant.OddEven)
+  }
+  if (constraints.topBottom) {
+    variants.push(SudokuVariant.TopBottom)
+  }
+  if (!isEmpty(constraints.renbans)) {
+    variants.push(SudokuVariant.Renban)
+  }
+  if (variants.length > 1) {
+    return SudokuVariant.Mixed
+  } else if (variants.length === 1) {
+    return variants[0]
+  } else {
+    return SudokuVariant.Classic
+  }
+}
+
+export const gridToGridString: (grid: Grid) => string = (grid: Grid) => {
+  let gridString = '';
+  grid.forEach(row => {
+    row.forEach(cell => {
+      const value = cell !== null ? cell : 0;
+      gridString += value;
+    })
+  })
+  return gridString;
+}
+
+export const fixedNumbersToGridString: (gridSize: number, fixedNumbers?: FixedNumber[]) => string = (gridSize: number, fixedNumbers?: FixedNumber[]) => {
+  const grid = computeFixedNumbersGrid(gridSize, fixedNumbers)
+  return gridToGridString(grid)
+}
+
+export const computeFixedNumbersGrid = (gridSize: number, fixedNumbers?: FixedNumber[]) => {
+  const grid: Grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null))
+  for (const fixedNumber of fixedNumbers ?? []) {
+    grid[fixedNumber.position.row][fixedNumber.position.col] = fixedNumber.value
+  }
+  return grid
+}
+
+export const regionsToRegionGrid = (gridSize: number, regions: Region[]) => {
+  const regionGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null))
+  regions.forEach((region, index) => {
+    for (const { row, col } of region) {
+      regionGrid[row][col] = index + 1
+    }
+  })
+  return regionGrid
+}
+
+export const regionGridToRegions = (gridSize: number, regionGrid: Grid): Region[] => {
+  const regions: Region[] = []
+  times(gridSize, row => {
+    times(gridSize, col => {
+      const regionIndex = regionGrid[row][col]! - 1
+      regions[regionIndex] ||= []
+      const cell: CellPosition = { row, col }
+      regions[regionIndex].push(cell)
+    })
+  })
+  return regions
 }
