@@ -16,3 +16,8 @@ export const encoders: { [F in SudokuDataFormat]: Encoder<FormatsToConstraints[F
   [SudokuDataFormat.Lisudoku]: lisudokuEncoder,
   [SudokuDataFormat.Fpuzzles]: fpuzzlesEncoder,
 }
+
+export const FORMATS = decoders.map(({ format, urlPatterns }) => ({
+  format,
+  urlPatterns,
+}))

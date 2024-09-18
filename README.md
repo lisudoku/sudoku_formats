@@ -7,7 +7,7 @@ See it in action on the [lisudoku solver](http://lisudoku.xyz/solver) page throu
 ## Decoding and encoding puzzles
 
 ```
-import { decodeSudoku, encodeSudoku, getAllFormats, SudokuDataFormat } from 'sudoku-formats'
+import { decodeSudoku, encodeSudoku, FORMATS, SudokuDataFormat } from 'sudoku-formats'
 
 // Parse grid string
 decodeSudoku('1000003002000004').then(({ constraints }) => {
@@ -38,7 +38,7 @@ const { error } = await decodeSudoku('123');
 console.log(error) // 'Error while parsing inline data'
 
 // Get all formats
-console.log(getAllFormats()) // [{ format: 'lisudoku', urlPatterns: ... }, ...]
+console.log(FORMATS) // [{ format: 'lisudoku', urlPatterns: ... }, ...]
 ```
 
 ## Converting between formats
