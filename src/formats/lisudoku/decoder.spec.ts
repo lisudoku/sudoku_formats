@@ -88,10 +88,10 @@ export const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
     [{ row: 2, col: 5 }, { row: 3, col: 6 }, { row: 4, col: 6 }, { row: 4, col: 5 }],
   ],
 }
-export const LISUDOKU_SOLVER_INVALID_URL = 'https://lisudoku.xyz/solver?import=1234'
-export const GRID_STRING = '000000000000000010000000200000003000000040000000500000000000000000000000000000000'
-export const LISUDOKU_SOLVER_GRID_STRING = `https://lisudoku.xyz/solver?import=${GRID_STRING}`
-export const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
+const LISUDOKU_SOLVER_INVALID_URL = 'https://lisudoku.xyz/solver?import=1234'
+const GRID_STRING = '000000000000000010000000200000003000000040000000500000000000000000000000000000000'
+const LISUDOKU_SOLVER_GRID_STRING = `https://lisudoku.xyz/solver?import=${GRID_STRING}`
+const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
   gridSize: 9,
   fixedNumbers: [
     { position: { row: 1, col: 7 }, value: 1 },
@@ -100,55 +100,14 @@ export const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
     { position: { row: 4, col: 4 }, value: 4 },
     { position: { row: 5, col: 3 }, value: 5 },
   ],
-  regions: [
-    [
-      { row: 0, col: 0 }, { row: 0, col: 1 }, { row: 0, col: 2 },
-      { row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 },
-      { row: 2, col: 0 }, { row: 2, col: 1 }, { row: 2, col: 2 },
-    ],
-    [
-      { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 },
-      { row: 1, col: 3 }, { row: 1, col: 4 }, { row: 1, col: 5 },
-      { row: 2, col: 3 }, { row: 2, col: 4 }, { row: 2, col: 5 },
-    ],
-    [
-      { row: 0, col: 6 }, { row: 0, col: 7 }, { row: 0, col: 8 },
-      { row: 1, col: 6 }, { row: 1, col: 7 }, { row: 1, col: 8 },
-      { row: 2, col: 6 }, { row: 2, col: 7 }, { row: 2, col: 8 },
-    ],
-    [
-      { row: 3, col: 0 }, { row: 3, col: 1 }, { row: 3, col: 2 },
-      { row: 4, col: 0 }, { row: 4, col: 1 }, { row: 4, col: 2 },
-      { row: 5, col: 0 }, { row: 5, col: 1 }, { row: 5, col: 2 },
-    ],
-    [
-      { row: 3, col: 3 }, { row: 3, col: 4 }, { row: 3, col: 5 },
-      { row: 4, col: 3 }, { row: 4, col: 4 }, { row: 4, col: 5 },
-      { row: 5, col: 3 }, { row: 5, col: 4 }, { row: 5, col: 5 },
-    ],
-    [
-      { row: 3, col: 6 }, { row: 3, col: 7 }, { row: 3, col: 8 },
-      { row: 4, col: 6 }, { row: 4, col: 7 }, { row: 4, col: 8 },
-      { row: 5, col: 6 }, { row: 5, col: 7 }, { row: 5, col: 8 },
-    ],
-    [
-      { row: 6, col: 0 }, { row: 6, col: 1 }, { row: 6, col: 2 },
-      { row: 7, col: 0 }, { row: 7, col: 1 }, { row: 7, col: 2 },
-      { row: 8, col: 0 }, { row: 8, col: 1 }, { row: 8, col: 2 },
-    ],
-    [
-      { row: 6, col: 3 }, { row: 6, col: 4 }, { row: 6, col: 5 },
-      { row: 7, col: 3 }, { row: 7, col: 4 }, { row: 7, col: 5 },
-      { row: 8, col: 3 }, { row: 8, col: 4 }, { row: 8, col: 5 },
-    ],
-    [
-      { row: 6, col: 6 }, { row: 6, col: 7 }, { row: 6, col: 8 },
-      { row: 7, col: 6 }, { row: 7, col: 7 }, { row: 7, col: 8 },
-      { row: 8, col: 6 }, { row: 8, col: 7 }, { row: 8, col: 8 },
-    ],
-  ],
 }
 const LISUDOKU_DB_PUZZLE_URL = 'https://lisudoku.xyz/p/uWwScbyWCyHXi2kbL3LY'
+
+const LISUDOKU_MIN_URL = 'https://lisudoku.xyz/e?import=N4Ig5gTglgJgylAXgUxALgJwBoQAdoC2AhhAJ4AiURYA9gHZEA26ALhAK7IC%2BQA%3D'
+const LISUDOKU_MIN_CONSTRAINTS: LisudokuConstraints = {
+  gridSize: 9,
+  primaryDiagonal: true,
+}
 
 test('detects lisudoku puzzle with solver url', async () => {
   const result = await decoder.run(LISUDOKU_SOLVER_URL)
@@ -218,5 +177,14 @@ test('invalid lisudoku constraints schema should return error', async () => {
     matched: true,
     dataString: 'N4IgHiBcDMC+Q%3D%3D%3D',
     error: expect.any(String),
+  })
+})
+
+test('works without regions', async () => {
+  const result = await decoder.run(LISUDOKU_MIN_URL)
+  expect(result).toEqual({
+    matched: true,
+    constraints: LISUDOKU_MIN_CONSTRAINTS,
+    dataString: expect.any(String),
   })
 })

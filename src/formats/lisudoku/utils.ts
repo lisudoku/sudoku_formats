@@ -34,7 +34,6 @@ const computeRegionSizes = (gridSize: number) => {
 
 export const defaultConstraints = (gridSize: number): LisudokuConstraints => ({
   gridSize,
-  regions: ensureDefaultRegions(gridSize),
 })
 
 export const gridSizeFromString: (gridString: string) => number = (gridString: string) => (
@@ -138,7 +137,7 @@ export const detectVariant = (constraints: LisudokuConstraints | null) => {
   if (constraints.antiKing) {
     variants.push(SudokuVariant.AntiKing)
   }
-  if (!isEqual(constraints.regions, ensureDefaultRegions(constraints.gridSize))) {
+  if (constraints.regions !== undefined && !isEqual(constraints.regions, ensureDefaultRegions(constraints.gridSize))) {
     variants.push(SudokuVariant.Irregular)
   }
   if (!isEmpty(constraints.killerCages)) {

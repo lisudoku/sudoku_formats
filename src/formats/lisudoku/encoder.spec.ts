@@ -163,6 +163,12 @@ export const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
   renbans: [],
 }
 
+const LISUDOKU_MIN_URL = 'N4Ig5gTglgJgylAXgUxALgJwBoQAdoC2AhhAJ4AiURYA9gHZEA26ALhAK7IC%2BQA%3D'
+const LISUDOKU_MIN_CONSTRAINTS: LisudokuConstraints = {
+  gridSize: 9,
+  primaryDiagonal: true,
+}
+
 test('encodes puzzle correctly', () => {
   const result = encoder(LISUDOKU_CONSTRAINTS)
   expect(result).toEqual({
@@ -176,5 +182,13 @@ test('encodes simple puzzles as grid strings', () => {
   expect(result).toEqual({
     dataString: GRID_STRING,
     url: LISUDOKU_SOLVER_GRID_STRING,
+  })
+})
+
+test('works without regions', () => {
+  const result = encoder(LISUDOKU_MIN_CONSTRAINTS)
+  expect(result).toEqual({
+    dataString: LISUDOKU_MIN_URL,
+    url: expect.any(String),
   })
 })

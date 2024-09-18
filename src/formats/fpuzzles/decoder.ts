@@ -30,7 +30,7 @@ const decodeFpuzzlesInline = (dataString: string) => {
   // Schema sanity check. Could use something like zod.
   if (!('size' in parsedConstraints)) {
     return {
-      error: 'Invalid constraints json schema',
+      error: 'Invalid constraints json schema: "size" not found',
     }
   }
 

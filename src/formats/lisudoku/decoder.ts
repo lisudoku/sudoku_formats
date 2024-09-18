@@ -45,9 +45,9 @@ const decodeLisudokuInline = (dataString: string) => {
   const filteredConstraints = camelCaseKeys(parsedConstraints)
 
   // Schema sanity check. Could use something like zod.
-  if (!('regions' in filteredConstraints)) {
+  if (!('gridSize' in filteredConstraints)) {
     return {
-      error: 'Invalid constraints json schema',
+      error: 'Invalid constraints json schema: "gridSize" not found',
     }
   }
 
