@@ -53,6 +53,13 @@ test('returns error if no matches', async () => {
   })
 })
 
+test('returns specific error if empty input', async () => {
+  const result = await decodeSudoku('')
+  expect(result).toEqual({
+    error: expect.stringContaining('empty'),
+  })
+})
+
 test('detects that it is a lisudoku data string', async () => {
   const result = await decodeSudoku(LISUDOKU_DATA_STRING)
   expect(result).toEqual({

@@ -9,6 +9,12 @@ import { decoders } from './formats'
 export const decodeSudoku = async (input: string, followRedirects = true): Promise<DecodeOutput> => {
   const processedInput = input.trim()
 
+  if (processedInput === '') {
+    return {
+      error: 'Input is empty',
+    }
+  }
+
   let result: MatchResult | undefined
   let format
   for (const decoder of decoders) {
