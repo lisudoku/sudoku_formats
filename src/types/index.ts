@@ -1,16 +1,19 @@
 import { FpuzzlesConstraints } from '../formats/fpuzzles'
 import { LisudokuConstraints } from '../formats/lisudoku'
+import { PenpaConstraints } from '../formats/penpa'
 
 export enum SudokuDataFormat {
   Lisudoku = 'lisudoku',
   Fpuzzles = 'fpuzzles',
+  Penpa = 'penpa',
 }
 
-export type Constraints = LisudokuConstraints | FpuzzlesConstraints
+export type Constraints = LisudokuConstraints | FpuzzlesConstraints | PenpaConstraints
 
 export type FormatsToConstraints = {
   [SudokuDataFormat.Lisudoku]: LisudokuConstraints,
   [SudokuDataFormat.Fpuzzles]: FpuzzlesConstraints,
+  [SudokuDataFormat.Penpa]: PenpaConstraints,
 }
 
 interface DecodeOutputSuccess {

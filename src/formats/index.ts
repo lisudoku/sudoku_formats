@@ -1,20 +1,24 @@
 import { Encoder, FormatsToConstraints, SudokuDataFormat, Transformer } from '../types'
-import { decoder as lisudokuDecoder, transformer as lisudokuTransformer, encoder as lisudokuEncoder } from './lisudoku'
-import { decoder as fpuzzlesDecoder, transformer as fpuzzlesTransformer, encoder as fpuzzlesEncoder } from './fpuzzles'
+import * as lisudoku from './lisudoku'
+import * as fpuzzles from './fpuzzles'
+import * as penpa from './penpa'
 
 export const decoders = [
-  lisudokuDecoder,
-  fpuzzlesDecoder,
+  lisudoku.decoder,
+  fpuzzles.decoder,
+  penpa.decoder,
 ]
 
 export const transformers: { [F in SudokuDataFormat]: Transformer<FormatsToConstraints[F]> } = {
-  [SudokuDataFormat.Lisudoku]: lisudokuTransformer,
-  [SudokuDataFormat.Fpuzzles]: fpuzzlesTransformer,
+  [SudokuDataFormat.Lisudoku]: lisudoku.transformer,
+  [SudokuDataFormat.Fpuzzles]: fpuzzles.transformer,
+  [SudokuDataFormat.Penpa]: penpa.transformer,
 }
 
 export const encoders: { [F in SudokuDataFormat]: Encoder<FormatsToConstraints[F]> } = {
-  [SudokuDataFormat.Lisudoku]: lisudokuEncoder,
-  [SudokuDataFormat.Fpuzzles]: fpuzzlesEncoder,
+  [SudokuDataFormat.Lisudoku]: lisudoku.encoder,
+  [SudokuDataFormat.Fpuzzles]: fpuzzles.encoder,
+  [SudokuDataFormat.Penpa]: penpa.encoder,
 }
 
 export const FORMATS = decoders.map(({ format, urlPatterns }) => ({

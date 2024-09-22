@@ -27,10 +27,14 @@ const decodeLisudokuInline = (dataString: string) => {
     }
   }
 
-  const constraintsStr = decompressFromBase64(decodeURIComponent(dataString))
-  if (constraintsStr === null || constraintsStr === '') {
-    return {
-      error: 'Error while parsing inline data',
+  let constraintsStr = undefined
+  try {
+    constraintsStr = decompressFromBase64(decodeURIComponent(dataString))
+  } finally {
+    if (constraintsStr === undefined || constraintsStr === null || constraintsStr === '') {
+      return {
+        error: 'Error while parsing inline data',
+      }
     }
   }
 

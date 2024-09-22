@@ -11,10 +11,14 @@ const URL_PATTERNS = [
 ]
 
 const decodeFpuzzlesInline = (dataString: string) => {
-  const constraintsStr = decompressFromBase64(dataString)
-  if (constraintsStr === null || constraintsStr === '') {
-    return {
-      error: 'Error while parsing inline data',
+  let constraintsStr = undefined
+  try {
+    constraintsStr = decompressFromBase64(dataString)
+  } finally {
+    if (constraintsStr === undefined || constraintsStr === null || constraintsStr === '') {
+      return {
+        error: 'Error while parsing inline data',
+      }
     }
   }
 
