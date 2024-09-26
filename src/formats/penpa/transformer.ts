@@ -1,54 +1,54 @@
-import { fromPairs, isEmpty, orderBy, times, toPairs } from 'lodash-es'
+import { fromPairs, inRange, isEmpty, orderBy, times, toPairs } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
-import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
+import { CellPosition, FixedNumber, KropkiDot, KropkiDotType } from '../lisudoku/types'
 import { GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
 import { PenpaConstraints } from './types'
 import { encoder as penpaEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
 
 // Simplifies formula because spaces will be 0
-const cellToIndex = (cell: CellPosition, gridSize: number) => (
-  (cell.row + 2) * (gridSize + 4) + cell.col + 2
+const cellToIndex = (cell: CellPosition, constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => (
+  (cell.row + 2 + constraints.space[0]) * (constraints.colCount + 4) + cell.col + 2 + constraints.space[2]
 )
 
-const cellArrayToIndices = (cells: CellPosition[], gridSize: number) => (
-  cells.map((cell) => cellToIndex(cell, gridSize))
+const cellArrayToIndices = (cells: CellPosition[], constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => (
+  cells.map((cell) => cellToIndex(cell, constraints))
 )
 
-const cellTopLeftIndex = (cell: CellPosition, gridSize: number) => (
-  4 * (cellToIndex(cell, gridSize) + (gridSize + 4) * (gridSize + 4))
+const cellTopLeftIndex = (cell: CellPosition, constraints: PenpaConstraints) => (
+  4 * (cellToIndex(cell, constraints) + (constraints.rowCount + 4) * (constraints.colCount + 4))
 )
 
-const indexToCell = (index: number, gridSize: number) => ({
-  row: Math.floor(index / (gridSize + 4)) - 2,
-  col: index % (gridSize + 4) - 2,
+const indexToCell = (index: number, constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => ({
+  row: Math.floor(index / (constraints.colCount + 4)) - 2 - constraints.space[0],
+  col: index % (constraints.colCount + 4) - 2 - constraints.space[2],
 })
 
-const indexArraytoCells = (indices: number[], gridSize: number) => (
-  indices.map((index) => indexToCell(index, gridSize))
+const indexArraytoCells = (indices: number[], constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => (
+  indices.map((index) => indexToCell(index, constraints))
 )
 
-const kropkiDotToIndex = (dot: KropkiDot, gridSize: number) => {
+const kropkiDotToIndex = (dot: KropkiDot, constraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'>) => {
   const cells = orderBy([dot.cell1, dot.cell2], ['row', 'col'])
   const cell = cells[0]
   if (cell.row === cells[1].row) {
     // horizontal
-    return 3 * (gridSize + 4) * (gridSize + 4) + cellToIndex(cell, gridSize)
+    return 3 * (constraints.rowCount + 4) * (constraints.colCount + 4) + cellToIndex(cell, constraints)
   } else {
     // vertical
-    return 2 * (gridSize + 4) * (gridSize + 4) + cellToIndex(cell, gridSize)
+    return 2 * (constraints.rowCount + 4) * (constraints.colCount + 4) + cellToIndex(cell, constraints)
   }
 }
 
-const buildKropki = (index: number, val: [number, string, number], gridSize: number): KropkiDot => {
+const buildKropki = (index: number, val: [number, string, number], constraints: PenpaConstraints): KropkiDot => {
   const dotType = val[0] === 1 || val[0] === 8 ? KropkiDotType.Consecutive : KropkiDotType.Double
 
   // Note: might have missed some cases here when it's from the other cell's perspective
-  if (index >= 3 * (gridSize + 4) * (gridSize + 4) + cellToIndex({ row: 0, col: 0 }, gridSize)) {
+  if (index >= 3 * (constraints.rowCount + 4) * (constraints.colCount + 4) + cellToIndex({ row: 0, col: 0 }, constraints)) {
     // horizontal
-    const cellIndex = index - 3 * (gridSize + 4) * (gridSize + 4)
-    const cell = indexToCell(cellIndex, gridSize)
+    const cellIndex = index - 3 * (constraints.rowCount + 4) * (constraints.colCount + 4)
+    const cell = indexToCell(cellIndex, constraints)
     return {
       dotType,
       cell1: cell,
@@ -59,8 +59,8 @@ const buildKropki = (index: number, val: [number, string, number], gridSize: num
     }
   } else {
     // vertical
-    const cellIndex = index - 2 * (gridSize + 4) * (gridSize + 4)
-    const cell = indexToCell(cellIndex, gridSize)
+    const cellIndex = index - 2 * (constraints.rowCount + 4) * (constraints.colCount + 4)
+    const cell = indexToCell(cellIndex, constraints)
     return {
       dotType,
       cell1: cell,
@@ -100,7 +100,7 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
       continue
     }
 
-    const cell = indexToCell(Number(index), gridSize)
+    const cell = indexToCell(Number(index), constraints)
     const fixedNumber: FixedNumber = {
       position: cell,
       value,
@@ -113,10 +113,10 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
   const newConstraints: LisudokuConstraints = {
     gridSize,
     fixedNumbers,
-    thermos: constraints.thermo.map((thermo) => indexArraytoCells(thermo, gridSize)),
+    thermos: constraints.thermo.filter((thermo) => thermo.length >= 2).map((thermo) => indexArraytoCells(thermo, constraints)),
     arrows: constraints.arrows.map(([circleIndex, ...arrowIndices]) => ({
-      circleCells: [indexToCell(circleIndex, gridSize)],
-      arrowCells: indexArraytoCells(arrowIndices, gridSize),
+      circleCells: [indexToCell(circleIndex, constraints)],
+      arrowCells: indexArraytoCells(arrowIndices, constraints),
     })),
     primaryDiagonal: Boolean(constraints.sudoku[0]),
     secondaryDiagonal: Boolean(constraints.sudoku[3]),
@@ -124,13 +124,25 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
     // killerCages: [],
     kropkiDots: toPairs(constraints.symbol)
       .filter(([_, val]) => val[1] === 'circle_SS')
-      .map(([index, val]) => buildKropki(Number(index), val, gridSize)),
+      .map(([index, val]) => buildKropki(Number(index), val, constraints)),
     oddCells: toPairs(constraints.symbol)
       .filter(([_, val]) => val[1] === 'circle_L')
-      .map(([index, _]) => indexToCell(Number(index), gridSize)),
+      .map(([index, _]) => indexToCell(Number(index), constraints)),
     evenCells: toPairs(constraints.symbol)
       .filter(([_, val]) => val[1] === 'square_L')
-      .map(([index, _]) => indexToCell(Number(index), gridSize)),
+      .map(([index, _]) => indexToCell(Number(index), constraints)),
+  }
+
+  const fixedDigitsInvalid = newConstraints.fixedNumbers?.some(({ position: { row, col }, value }) => {
+    if (!inRange(value, 1, newConstraints.gridSize + 1)) return true;
+    if (!inRange(row, 0, newConstraints.gridSize)) return true;
+    if (!inRange(col, 0, newConstraints.gridSize)) return true;
+    return false;
+  })
+  if (fixedDigitsInvalid) {
+    return {
+      error: `Given digits out of range.`,
+    }
   }
 
   const normalizedConstraints = normalizeConstraints(newConstraints)
@@ -156,7 +168,7 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
   let prevIndex = 0
   times(constraints.gridSize, row => {
     times(constraints.gridSize, col => {
-      const index = cellToIndex({ row, col }, constraints.gridSize)
+      const index = cellToIndex({ row, col }, { colCount: constraints.gridSize, space: [0, 0, 0, 0] })
       centerlist.push(index - prevIndex)
       prevIndex = index
     })
@@ -164,28 +176,32 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
 
   const gridSize = constraints.gridSize
 
+  const auxConstraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'> = {
+    rowCount: gridSize,
+    colCount: gridSize,
+    space: [0, 0, 0, 0],
+  }
+
   // TODO: Killer cage and primary diagonals not showing
   // Not implemented: extra regions, renban and others
   // Include some (like antiknigh into written rules?! antiknight, antiking, kropkiNegative)
   const newConstraints: PenpaConstraints = {
-    rowCount: gridSize,
-    colCount: gridSize,
+    ...auxConstraints,
     cellSize: 38,
     canvasWidth: (gridSize + 1) * 38,
     canvasHeight: (gridSize + 1) * 38,
-    centerCellIndex: cellToIndex({ row: Math.floor(gridSize / 2), col: Math.floor(gridSize / 2) }, gridSize),
-    space: [0, 0, 0, 0],
+    centerCellIndex: cellToIndex({ row: Math.floor(gridSize / 2), col: Math.floor(gridSize / 2) }, auxConstraints),
     sudoku: [Number(constraints.primaryDiagonal), 0, 0, Number(constraints.secondaryDiagonal)],
-    thermo: (constraints.thermos ?? []).map((thermo) => cellArrayToIndices(thermo, gridSize)),
+    thermo: (constraints.thermos ?? []).map((thermo) => cellArrayToIndices(thermo, auxConstraints)),
     // Commented until killer cage is fixed
     // killercages: (constraints.killerCages ?? []).map((cage) => cellArrayToIndices(cage.region, gridSize)),
     killercages: [],
     arrows: (constraints.arrows ?? [])
       .filter((arrow) => arrow.circleCells.length === 1)
-      .map((arrow) => cellArrayToIndices([...arrow.circleCells, ...arrow.arrowCells], gridSize)),
+      .map((arrow) => cellArrayToIndices([...arrow.circleCells, ...arrow.arrowCells], auxConstraints)),
     number: fromPairs(
       (constraints.fixedNumbers ?? []).map(({ position, value }) => [
-        cellToIndex(position, gridSize),
+        cellToIndex(position, auxConstraints),
         [String(value), 1, "1"],
       ]
     )),
@@ -199,15 +215,15 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     ),
     symbol: fromPairs([
       ...(constraints.kropkiDots ?? []).map((dot) => [
-        kropkiDotToIndex(dot, gridSize),
+        kropkiDotToIndex(dot, auxConstraints),
         [dot.dotType === KropkiDotType.Consecutive ? 8 : 2, 'circle_SS', 2]
       ]),
       ...(constraints.oddCells ?? []).map((cell) => [
-        cellToIndex(cell, gridSize),
+        cellToIndex(cell, auxConstraints),
         [3, 'circle_L', 2],
       ]),
       ...(constraints.evenCells ?? []).map((cell) => [
-        cellToIndex(cell, gridSize),
+        cellToIndex(cell, auxConstraints),
         [3, 'square_L', 2],
       ]),
     ]),

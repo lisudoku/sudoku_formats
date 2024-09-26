@@ -4,7 +4,7 @@ import { inflateRaw } from 'pako'
 import { DATA_FIELDS, DATA_REPLACE } from './constants';
 import { pick } from 'lodash-es';
 
-const PENPA_INLINE_DATA_REGEX = /^.+:\/\/.+\/penpa-edit\/.+&p=([^&]+)$/
+const PENPA_INLINE_DATA_REGEX = /^.+:\/\/.+\/penpa-edit\/.+&p=([^&]+)/
 
 const URL_PATTERNS = [
   PENPA_INLINE_DATA_REGEX,
@@ -20,11 +20,11 @@ const processDataLine = (line: string) => {
 const decodePenpaInline = (dataString: string) => {
   let decoded = undefined
   try {
-    const step1 = atob(dataString);
+    const step1 = atob(dataString)
     const step2 = Uint8Array.from([...step1].map(c => c.charCodeAt(0)))
     const step3 = inflateRaw(step2)
-    decoded = new TextDecoder().decode(step3);
-  } catch (e) {
+    decoded = new TextDecoder().decode(step3)
+  } catch (e: unknown) {
     return {
       error: 'Error while parsing inline data',
     }
