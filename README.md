@@ -4,6 +4,12 @@ Convert between different sudoku formats (lisudoku, fpuzzles, penpa).
 
 See it in action on the [lisudoku solver](http://lisudoku.xyz/solver) page through the import button.
 
+## Install
+
+```
+yarn add sudoku-formats
+```
+
 ## Decoding and encoding puzzles
 
 ```
