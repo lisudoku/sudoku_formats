@@ -1,7 +1,8 @@
 import { decompressFromBase64 } from 'lz-string'
 import { Decoder, DecoderRunFn, MatchResult, SudokuDataFormat } from '../../types';
+import { camelCaseKeys } from './utils';
+import { decoder as gridStringDecoder, transformer as gridStringTransformer } from '../gridstring'
 import { LisudokuConstraints } from './types';
-import { camelCaseKeys, defaultConstraints, gridSizeFromString, gridStringToFixedNumbers, isGridString } from './utils';
 
 const LISUDOKU_API_BASE_URL = 'https://api.lisudoku.xyz/api'
 
@@ -15,15 +16,24 @@ const URL_PATTERNS = [
   LISUDOKU_DB_PUZZLE_REGEX,
 ]
 
-const decodeLisudokuInline = (dataString: string) => {
-  if (isGridString(dataString)) {
-    const gridSize = gridSizeFromString(dataString)
-    const constraints: LisudokuConstraints = {
-      ...defaultConstraints(gridSize),
-      fixedNumbers: gridStringToFixedNumbers(dataString),
+const decodeLisudokuInline = async (dataString: string) => {
+  const gridStringDecodeResult = await gridStringDecoder.run(dataString)
+  if (gridStringDecodeResult.matched) {
+    if (gridStringDecodeResult.error !== undefined) {
+      return {
+        error: gridStringDecodeResult.error,
+      }
     }
+
+    const lisudokuTransformResult = gridStringTransformer.transformToLisudoku(gridStringDecodeResult.constraints)
+    if (lisudokuTransformResult.error !== undefined) {
+      return {
+        error: lisudokuTransformResult.error,
+      }
+    }
+
     return {
-      constraints,
+      constraints: lisudokuTransformResult.constraints,
     }
   }
 
@@ -56,11 +66,11 @@ const decodeLisudokuInline = (dataString: string) => {
   }
 
   return {
-    constraints: filteredConstraints,
+    constraints: filteredConstraints as LisudokuConstraints,
   }
 }
 
-const matchStaticUrls = (input: string): MatchResult => {
+const matchStaticUrls = async (input: string): Promise<MatchResult<SudokuDataFormat.Lisudoku>> => {
   let match = input.match(LISUDOKU_EXTERNAL_PUZZLE_REGEX)
   if (!match) {
     match = input.match(LISUDOKU_SOLVER_PUZZLE_REGEX)
@@ -71,7 +81,7 @@ const matchStaticUrls = (input: string): MatchResult => {
     }
   }
   const dataString = match[1]
-  const result = decodeLisudokuInline(dataString)
+  const result = await decodeLisudokuInline(dataString)
 
   return {
     matched: true,
@@ -80,8 +90,8 @@ const matchStaticUrls = (input: string): MatchResult => {
   }
 }
 
-const matchDataString = (input: string): MatchResult => {
-  const result = decodeLisudokuInline(input)
+const matchDataString = async (input: string): Promise<MatchResult<SudokuDataFormat.Lisudoku>> => {
+  const result = await decodeLisudokuInline(input)
 
   if (result.error) {
     return {
@@ -96,7 +106,7 @@ const matchDataString = (input: string): MatchResult => {
   }
 }
 
-const matchDbUrl: DecoderRunFn = async (input: string) => {
+const matchDbUrl: DecoderRunFn<SudokuDataFormat.Lisudoku> = async (input: string) => {
   let match = input.match(LISUDOKU_DB_PUZZLE_REGEX)
   if (!match) {
     return {
@@ -135,13 +145,13 @@ const matchDbUrl: DecoderRunFn = async (input: string) => {
   }
 }
 
-const run: DecoderRunFn = async (input: string) => {
-  let result = matchStaticUrls(input);
+const run: DecoderRunFn<SudokuDataFormat.Lisudoku> = async (input: string) => {
+  let result = await matchStaticUrls(input);
   if (result.matched) {
     return result
   }
 
-  result = matchDataString(input);
+  result = await matchDataString(input);
   if (result.matched) {
     return result
   }
@@ -149,7 +159,7 @@ const run: DecoderRunFn = async (input: string) => {
   return matchDbUrl(input);
 }
 
-export const decoder: Decoder = {
+export const decoder: Decoder<SudokuDataFormat.Lisudoku> = {
   format: SudokuDataFormat.Lisudoku,
   urlPatterns: URL_PATTERNS,
   run,

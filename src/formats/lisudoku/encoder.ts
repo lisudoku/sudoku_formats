@@ -1,13 +1,15 @@
 import { compressToBase64 } from 'lz-string';
 import { Encoder, EncodeResult } from '../../types';
-import { detectVariant, fixedNumbersToGridString, normalizeConstraints } from './utils';
-import { LisudokuConstraints, SudokuVariant } from './types';
+import { normalizeConstraints } from './utils';
+import { LisudokuConstraints } from './types';
+import { transformer as gridStringTransformer } from '../gridstring'
 
 const encodeDataString = (constraints: LisudokuConstraints): string => {
-  const variant = detectVariant(constraints)
-  if (variant === SudokuVariant.Classic) {
-    return fixedNumbersToGridString(constraints.gridSize, constraints.fixedNumbers)
+  const gridStringTransformResult = gridStringTransformer.transformFromLisudoku(constraints)
+  if (gridStringTransformResult.error === undefined) {
+    return gridStringTransformResult.constraints
   }
+
   const filteredConstraints = normalizeConstraints(constraints)
   const constraintsStr = JSON.stringify(filteredConstraints)
   const encodedData = encodeURIComponent(compressToBase64(constraintsStr))

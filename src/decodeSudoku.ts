@@ -15,7 +15,7 @@ export const decodeSudoku = async (input: string, followRedirects = true): Promi
     }
   }
 
-  let result: MatchResult | undefined
+  let result: MatchResult<any> | undefined
   let format
   for (const decoder of decoders) {
     result = await decoder.run(processedInput)

@@ -1,5 +1,5 @@
 import { camelCase, flatten, flattenDeep, isBoolean, isEmpty, isEqual, isNumber, omitBy, times } from 'lodash-es'
-import { CellPosition, FixedNumber, Grid, LisudokuConstraints, Region, SudokuVariant } from './types'
+import { CellPosition, Grid, LisudokuConstraints, Region, SudokuVariant } from './types'
 
 // TODO: deduplicate copy-pasted code from lisudou_frontend
 
@@ -35,65 +35,6 @@ const computeRegionSizes = (gridSize: number) => {
 export const defaultConstraints = (gridSize: number): LisudokuConstraints => ({
   gridSize,
 })
-
-export const gridSizeFromString: (gridString: string) => number = (gridString: string) => (
-  Math.sqrt(gridString.length)
-)
-
-export const isGridString = (gridString: string) => {
-  const gridSize = gridSizeFromString(gridString)
-  if (Math.trunc(gridSize) !== gridSize) {
-    return false
-  }
-  if (!GRID_SIZES.includes(gridSize)) {
-    return false
-  }
-  if (![...gridString].every(value => '0' <= value && value <= String(gridSize))) {
-    return false
-  }
-  return true
-}
-
-const createGridOfSize: (gridSize: number) => Grid = (gridSize: number) => (
-  Array(gridSize).fill(null).map(() => Array(gridSize).fill(null))
-)
-
-const gridStringToGrid: (gridString: string) => Grid = (gridString: string) => {
-  const gridSize = gridSizeFromString(gridString)
-  const grid = createGridOfSize(gridSize)
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      const index = row * gridSize + col
-      if (gridString[index] !== '0') {
-        grid[row][col] = parseInt(gridString[index])
-      }
-    }
-  }
-  return grid
-}
-
-const gridToFixedNumbers: (grid: Grid) => FixedNumber[] = (grid: Grid) => {
-  const fixedNumbers: FixedNumber[] = []
-  grid.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (cell !== null) {
-        fixedNumbers.push({
-          position: {
-            row: rowIndex,
-            col: colIndex,
-          },
-          value: cell,
-        })
-      }
-    })
-  })
-  return fixedNumbers
-}
-
-export const gridStringToFixedNumbers: (gridString: string) => FixedNumber[] = (gridString: string) => {
-  const grid = gridStringToGrid(gridString)
-  return gridToFixedNumbers(grid)
-}
 
 export const ensureDefaultRegions = (gridSize: number): Region[] => {
   const [ regionHeight, regionWidth ] = computeRegionSizes(gridSize)
@@ -165,30 +106,6 @@ export const detectVariant = (constraints: LisudokuConstraints | null) => {
   } else {
     return SudokuVariant.Classic
   }
-}
-
-export const gridToGridString: (grid: Grid) => string = (grid: Grid) => {
-  let gridString = '';
-  grid.forEach(row => {
-    row.forEach(cell => {
-      const value = cell !== null ? cell : 0;
-      gridString += value;
-    })
-  })
-  return gridString;
-}
-
-export const fixedNumbersToGridString: (gridSize: number, fixedNumbers?: FixedNumber[]) => string = (gridSize: number, fixedNumbers?: FixedNumber[]) => {
-  const grid = computeFixedNumbersGrid(gridSize, fixedNumbers)
-  return gridToGridString(grid)
-}
-
-export const computeFixedNumbersGrid = (gridSize: number, fixedNumbers?: FixedNumber[]) => {
-  const grid: Grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null))
-  for (const fixedNumber of fixedNumbers ?? []) {
-    grid[fixedNumber.position.row][fixedNumber.position.col] = fixedNumber.value
-  }
-  return grid
 }
 
 export const regionsToRegionGrid = (gridSize: number, regions: Region[]) => {

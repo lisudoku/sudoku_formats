@@ -3,14 +3,16 @@ import { LisudokuConstraints } from '../formats/lisudoku'
 import { PenpaConstraints } from '../formats/penpa'
 
 export enum SudokuDataFormat {
+  GridString = 'gridstring',
   Lisudoku = 'lisudoku',
   Fpuzzles = 'fpuzzles',
   Penpa = 'penpa',
 }
 
-export type Constraints = LisudokuConstraints | FpuzzlesConstraints | PenpaConstraints
+export type Constraints = string | LisudokuConstraints | FpuzzlesConstraints | PenpaConstraints
 
 export type FormatsToConstraints = {
+  [SudokuDataFormat.GridString]: string,
   [SudokuDataFormat.Lisudoku]: LisudokuConstraints,
   [SudokuDataFormat.Fpuzzles]: FpuzzlesConstraints,
   [SudokuDataFormat.Penpa]: PenpaConstraints,
@@ -56,10 +58,10 @@ type TransformOutputError = {
 
 export type TransformOutput<C> = TransformOutputSuccess<C> | TransformOutputError
 
-interface MatchResultSuccess {
+interface MatchResultSuccess<F extends SudokuDataFormat> {
   matched: true
   dataString: string
-  constraints: Constraints
+  constraints: FormatsToConstraints[F]
   error?: never
 }
 
@@ -77,14 +79,14 @@ interface MatchResultNoMatch {
   error?: never
 }
 
-export type MatchResult = MatchResultSuccess | MatchResultError | MatchResultNoMatch
+export type MatchResult<F extends SudokuDataFormat> = MatchResultSuccess<F> | MatchResultError | MatchResultNoMatch
 
-export type DecoderRunFn = (input: string) => Promise<MatchResult>
+export type DecoderRunFn<F extends SudokuDataFormat> = (input: string) => Promise<MatchResult<F>>
 
-export interface Decoder {
-  format: SudokuDataFormat
+export interface Decoder<F extends SudokuDataFormat> {
+  format: F
   urlPatterns: RegExp[]
-  run: DecoderRunFn
+  run: DecoderRunFn<F>
 }
 
 export interface Transformer<C> {

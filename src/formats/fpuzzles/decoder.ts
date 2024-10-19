@@ -45,7 +45,7 @@ const decodeFpuzzlesInline = (dataString: string) => {
   }
 }
 
-const matchStaticUrls = (input: string): MatchResult => {
+const matchStaticUrls = (input: string): MatchResult<SudokuDataFormat.Fpuzzles> => {
   const match = input.match(FPUZZLES_INLINE_DATA_REGEX)
   if (!match) {
     return {
@@ -62,7 +62,7 @@ const matchStaticUrls = (input: string): MatchResult => {
   }
 }
 
-const matchDataString = (input: string): MatchResult => {
+const matchDataString = (input: string): MatchResult<SudokuDataFormat.Fpuzzles> => {
   const result = decodeFpuzzlesInline(input)
 
   if (result.error) {
@@ -78,7 +78,7 @@ const matchDataString = (input: string): MatchResult => {
   }
 }
 
-const run: DecoderRunFn = async (input: string) => {
+const run: DecoderRunFn<SudokuDataFormat.Fpuzzles> = async (input: string) => {
   let result = matchStaticUrls(input);
   if (result.matched) {
     return result
@@ -94,7 +94,7 @@ const run: DecoderRunFn = async (input: string) => {
   }
 }
 
-export const decoder: Decoder = {
+export const decoder: Decoder<SudokuDataFormat.Fpuzzles> = {
   format: SudokuDataFormat.Fpuzzles,
   urlPatterns: URL_PATTERNS,
   run,

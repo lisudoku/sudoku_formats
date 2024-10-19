@@ -84,7 +84,7 @@ const decodePenpaInline = (dataString: string) => {
   }
 }
 
-const matchStaticUrls = (input: string): MatchResult => {
+const matchStaticUrls = (input: string): MatchResult<SudokuDataFormat.Penpa> => {
   const match = input.match(PENPA_INLINE_DATA_REGEX)
   if (!match) {
     return {
@@ -101,7 +101,7 @@ const matchStaticUrls = (input: string): MatchResult => {
   }
 }
 
-const matchDataString = (input: string): MatchResult => {
+const matchDataString = (input: string): MatchResult<SudokuDataFormat.Penpa> => {
   const result = decodePenpaInline(input)
 
   if (result.error) {
@@ -117,7 +117,7 @@ const matchDataString = (input: string): MatchResult => {
   }
 }
 
-const run: DecoderRunFn = async (input: string) => {
+const run: DecoderRunFn<SudokuDataFormat.Penpa> = async (input: string) => {
   let result = matchStaticUrls(input);
   if (result.matched) {
     return result
@@ -133,7 +133,7 @@ const run: DecoderRunFn = async (input: string) => {
   }
 }
 
-export const decoder: Decoder = {
+export const decoder: Decoder<SudokuDataFormat.Penpa> = {
   format: SudokuDataFormat.Penpa,
   urlPatterns: URL_PATTERNS,
   run,

@@ -3,20 +3,9 @@ import { decodeSudoku } from './decodeSudoku';
 import { SudokuDataFormat } from './types';
 import { LISUDOKU_CONSTRAINTS, LISUDOKU_DATA_STRING, LISUDOKU_SOLVER_URL } from './formats/lisudoku/decoder.spec';
 import { FPUZZLES_CONSTRAINTS, FPUZZLES_DATA_STRING, FPUZZLES_URL } from './formats/fpuzzles/decoder.spec';
-import { LisudokuConstraints } from './formats/lisudoku';
 
 const LISUDOKU_SOLVER_INVALID_URL = 'https://lisudoku.xyz/solver?import=1234'
 const GRID_STRING = '000000000000000010000000200000003000000040000000500000000000000000000000000000000'
-const LISUDOKU_GRID_STRING_CONSTRAINTS: LisudokuConstraints = {
-  gridSize: 9,
-  fixedNumbers: [
-    { position: { row: 1, col: 7 }, value: 1 },
-    { position: { row: 2, col: 6 }, value: 2 },
-    { position: { row: 3, col: 5 }, value: 3 },
-    { position: { row: 4, col: 4 }, value: 4 },
-    { position: { row: 5, col: 3 }, value: 5 },
-  ],
-}
 
 const PENPA_URL = 'https://logicmastersindia.com/penpa-edit/?m=solve&p=zVZvb9u2E37vT0EQ6Dv+ElHUf2AY0rTdi1+bdU2HojCMgLHVRKj+eJLcpg7az97njnItyx6GDRgw2CaPD8m75468o7vNqvm4Udqjr0kUenwCnfDPTyL+aeA087boyzwTififeFbYu6a2pbhmDSJ9SNXFpr9v2ky8ORP/31S2zTtbq/u+X3fZ+XnZ3BXLynZ93nZFvSrs2bKpzsviU37+87Kp+7zrf7p+5Xt+4Gn1urTLXFixKu6KXnxom0po0TciFUWNLrfLe5FX6/6LWOZlCVD097m4a4uV6BrItndr3H67Xue27UT+YJd9+UU0NZRjDy9pm89P/EuxbMpNVQtbr4R5MKLZ9GVR5ytx2zycPfGf4fucVlcW+0De+U68AUDz3tiI7Jn69cUL9cGWXT6bUwzxW8zmUkslffy0XHyT7gTkN4bTxexx+yZ73N5k88VXtf19LyZ78Tp7RHuVPUoTyGwun0oVKBnJhZJBRICRMEXqAaQERHsg1ASkI4BXBHsg4hXxCAgJAOMdELPZkY7Em+hIWMeIh/b8CRHtmckm7bHeZIywP+EYiY80JxN6WrOei31YtM9OjvUYpoyY7xG2NfJKB1PH9VE4tYvnmLML6FiPi+hYT8QMf1jHcWo+1Pe7Q42VtC3u5s01UqrHuh9+hUcz2PeCd/vcvsUtUVvD7TNuPW5Dbl/ymuew4/up8gMcgo/rGBjlhwgtyWGs/BiUSY41KgDCQHISKj+FcySnqTLa7UWvjO/2olcmcHvRKxMOe40PWwgw20JViRB+kiMPtuAW2wpgC4fJthJl6MqQHs+HLbcXvTJ0dCQblKzA7UUPW8PeCJUrGnhG8DEebMVka+RX7PSjhzzEIUYcxnzigX8M3+OBfwz+8eAvlU09+Kvhrx44a+I8ig8dHcvgqZ1O9Id+6Z1OxFA7X9BDHnzxYZdiC90IIhwIsZkHITHazfCR7WZQvY03zEBwBnnAkdzNGMzQ8fAA52Poyjo7CKYBYR5EUB2AmbOD8PxYltCdgY/ODgKdwBlnB957OAEewAUOizOKO+TvjIYImIGj2sf1fMeX9JLbgNuIL29MBXA2mwchv1PjD71S/yGE6vzwNF41bWVL1PthfNm0dd6Oxnndt7lE6ZddU950m/YDXj+Z8cOhGKs31S22jKGyadb0RB2AxV3dtPnJKQLz1d2p9bdNu5po/2zL8gDo/tjgQT+AlkW7LA+hvi0OxlyoDpDK9vcHwK3t8aeiuy/Wh5oQlEMCvT2kaD/aibVq7/PXmXyQM4m/GGs5mxuciKGnNc22F2r7iyu9uzdYbX/D2/oq217R0zqXXGxRJ3mRD/H5XnzH8yRdDvXbg3zl3oQA4nuI08K9fZ3Nt2+VJFNPWQGJsmo+ga6jQmOQvYVDczkKiZsZ/iMMFqneXzDj3cQJ3mbPm0THm6Qp78Ex4u0O9Oblv0A6XXx1R+L9rT8443fxn71yf1lMHoa0a9qTmQf4RPIBPZlkA36UZ8CPMooMHicV0BN5BXSaWoCOswvgUYIB+5McI63TNCNW00wjU0fJRqbG+TZfzFj6Dg==&q=eyJwaWQiOiJEaWFnb25hbCA5eDkiLCJwdHMiOiI3IC8gNyIsImNpZCI6IlNNMjAyNDAxIiwiaWZyYW1lIjp0cnVlfQ=='
 
@@ -92,9 +81,9 @@ test('detects that it is an fpuzzles data string', async () => {
 test('detects that it is a grid string', async () => {
   const result = await decodeSudoku(GRID_STRING)
   expect(result).toEqual({
-    format: SudokuDataFormat.Lisudoku,
+    format: SudokuDataFormat.GridString,
     dataString: GRID_STRING,
-    constraints: LISUDOKU_GRID_STRING_CONSTRAINTS,
+    constraints: GRID_STRING,
   })
 })
 
