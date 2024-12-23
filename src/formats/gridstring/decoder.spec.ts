@@ -36,6 +36,6 @@ test('invalid grid string with high digits', async () => {
   expect(result).toEqual({
     matched: true,
     dataString: GRID_STRING_INVALID_DIGIT,
-    error: expect.stringContaining('invalid digit'),
+    error: expect.stringContaining("can't contain digit"),
   })
 })
