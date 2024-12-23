@@ -35,6 +35,17 @@ type KillerCage = {
   value?: string
 }
 
+type Renban = {
+  lines: Cell[][]
+}
+
+type CosmeticLine = {
+  lines: Cell[][]
+  outlineC: string
+  width: number
+  isNewConstraint: boolean
+}
+
 export type FpuzzlesConstraints = {
   size: number
   grid: Grid;
@@ -53,4 +64,6 @@ export type FpuzzlesConstraints = {
   nonconsecutive?: boolean
   negative?: string[] // could be further restricted if I figure out all the values :)
   disjointgroups?: boolean
+  renban?: Renban[]
+  line?: CosmeticLine[]
 }

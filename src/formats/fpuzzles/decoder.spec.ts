@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { decoder } from './decoder'
 import { FpuzzlesConstraints } from './types';
 
-export const FPUZZLES_DATA_STRING = 'N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSTQMY0IB7AOwQAYLXz3iBdZQty6uo3gBGVADcAhgBsArnBGoaYmEIAuGORRCTZ8gEyKIytRphadchAGZDxhOs0c+Rbryfuyn1q68fnTn39fYO8eEL8/QIjwryiYoNC3eOiXbhBsCAk0BmkAantTVAysnKkAWgK5VAl6VQgAa3oINAALVUqYatqGiHo0DtQYAA91CSoaBnxQAGMYKSkwfBAAJQBWAGE9EFQ19attlY2AFgPlgDY904uTnYB2S7v1m5X71dOADnW3zhdUWmxcPBCCBZvMEC91sIQL8QDA7ECZnMpODlp8oTDVC0YBgALa0HEwVTYqYgKS9GCLIF4FbCdZnU6024M9bvU56daIU5WDkgTg/NIZABmguxKlmJNBCyWy0QT1Osu+WkllOpMrp8q+vJhGAkdVoEqRKpWsqZO1lrJ+pBBhulss5ZpZWrSYwwtAA7iSyfQKfhVUd1Tt/aaVv7WTsNmGVhdI8t7ha0srpf63oH1fyiEA='
+export const FPUZZLES_DATA_STRING = 'N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSTQMY0IB7AOwQAYLXz3iBdZQty6uo3gBGVADcAhgBsArnBGoaYmEIAuGORRCTZ8gEyKIytRphadchAGZDxhOs0c+Rbryfuyn1q68fnTn39fYO8eEL8/QIjwryiYoNC3eOiXbhAYAA91CSoaBnxQAGMYKSkwfBAAJQBWAGE9EFQa2qtGqrqAFjbKgDYW7r6upoB2fpHaoarR6u6ADlqZzhdUVQALGAwAW1pNmFUNgpApCHoYcvgCKuFanu7r4bva2e69WsRuqzeQTiW0nIxaAB3Q7FUrnPBVDoLbpQ25pY6ncEQyqwmG1B5NKHPJp1bFVPp4yqjZ4/ZYgbAQCRoBjSADU9lMqApVJpUgAtAy5KgJPRVBAANb0CBoVaqTkwbm8gUnNDipkQABmCo2KmKIJKZQqlUQE26OsWWlBmouVR1tya+u+ZIwEj5tHVYK1OoxpqeVtIICN4Nd7wtbt+qFo2FwFyKGoQU1qwhAZJgdlDnvD8Cq82jZP5EFKG0KVPkhETjpNlU+0aanwamKjaIr7SrOPq33E0ksyb0DWtKgARjzDgizvhkaNS5Ga70xrXJs0ZpXzbWXc1CX13qT4Sc86A+0jI8OiQ2mn1WvXJ3Vp5Cbt06vPcQMvj9AzJVH3ahHMBIAJ5tQE4NbMAB0BhACAwAAORgQFagYMBshOMV4AcMwliAA='
 export const FPUZZLES_URL = `https://f-puzzles.com/?load=${FPUZZLES_DATA_STRING}`
 export const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
   size: 9,
@@ -27,12 +27,27 @@ export const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
   thermometer:[{"lines":[["R1C6","R1C7","R1C8","R2C9","R3C9"]]}],
   difference:[{"cells":["R9C4","R9C5"]},{"cells":["R9C6","R9C5"]}],
   ratio:[{"cells":["R9C7","R9C8"]},{"cells":["R9C9","R9C8"]}],
+  killercage: [
+    {
+      cells: ["R3C1", "R3C2", "R4C1", "R4C2", "R5C1", "R5C2"],
+      value: "22",
+    },
+  ],
   arrow:[
     {
       lines: [["R4C6","R4C7","R4C8","R5C8","R6C8","R7C8"]],
       cells: ["R4C5","R4C6"]
     }
-  ]
+  ],
+  renban: [{"lines":[["R7C1","R7C2","R6C3","R5C4","R5C5","R4C6","R5C7","R5C8","R6C9"]]}],
+  line: [
+    {
+      lines: [["R7C1","R7C2","R6C3","R5C4","R5C5","R4C6","R5C7","R5C8","R6C9"]],
+      outlineC: 'gray',
+      width: 0.2,
+      isNewConstraint: true,
+    },
+  ],
 }
 export const FPUZZLES_INVALID_URL = 'https://f-puzzles.com/?load=1234'
 

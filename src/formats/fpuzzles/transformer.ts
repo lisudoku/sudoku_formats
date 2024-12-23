@@ -12,7 +12,6 @@ const FPUZZLES_UNIMPLEMENTED_CONSTRAINTS: string[] = [
   'rowindexer', 'columnindexer', 'boxindexer', 'palindrome', 'whispers', 'regionsumline',
   'xv', 'clone', 'quadruple', 'betweenline', 'sandwichsum', 'xsum', 'skyscraper', 'entropicline',
   'disabledlogic', 'truecandidatesoptions', 'cage', 'text',
-  'renban', // TODO: recently added
 ]
 
 const cellStringToObject = (cell: string) => ({
@@ -102,7 +101,7 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
     extraRegions: (constraints.extraregion ?? []).map(({ cells }: { cells: string[] }) => (
       mapCellStringArray(cells)
     )),
-    thermos: flatMap((constraints.thermometer ?? []), ({ lines }: { lines: string[][] }) => (
+    thermos: flatMap(constraints.thermometer ?? [], ({ lines }: { lines: string[][] }) => (
       lines.map((cells: string[]) => mapCellStringArray(cells))
     )),
     arrows: (constraints.arrow ?? []).map(({ cells, lines }: { cells: string[], lines: string[][] }) => ({
@@ -123,8 +122,7 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
     oddCells: (constraints.odd ?? []).map(({ cell }: { cell: string }) => cellStringToObject(cell)),
     evenCells: (constraints.even ?? []).map(({ cell }: { cell: string }) => cellStringToObject(cell)),
     topBottom: false,
-    // TODO: find f-puzzle with renban
-    // renbans: constraints.renban
+    renbans: flatMap(constraints.renban ?? [], ({ lines }) => lines.map(mapCellStringArray)),
   }
 
   const normalizedConstraints = normalizeConstraints(newConstraints)
@@ -197,6 +195,17 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     })),
     ...(constraints.kropkiNegative ? { nonconsecutive: true } : {}), // shady
     // negative: [], // probably should include something here
+    renban: constraints.renbans?.map(renban => ({
+      lines: [renban.map(cellObjectToString)],
+    })),
+    line: [
+      ...(constraints.renbans ?? []).map(renban => ({
+        lines: [renban.map(cellObjectToString)],
+        outlineC: 'gray',
+        width: 0.2,
+        isNewConstraint: true,
+      }))
+    ],
   }
 
   return {
