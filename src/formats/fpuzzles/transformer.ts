@@ -11,7 +11,8 @@ const FPUZZLES_UNIMPLEMENTED_CONSTRAINTS: string[] = [
   'disjointgroups', 'littlekillersum', 'minimum', 'maximum',
   'rowindexer', 'columnindexer', 'boxindexer', 'palindrome', 'whispers', 'regionsumline',
   'xv', 'clone', 'quadruple', 'betweenline', 'sandwichsum', 'xsum', 'skyscraper', 'entropicline',
-  'disabledlogic', 'truecandidatesoptions', 'cage', 'text',
+  'cage', 'text',
+  // Removed 'disabledlogic' and 'truecandidatesoptions' because they seem related to the solver
 ]
 
 const cellStringToObject = (cell: string) => ({
