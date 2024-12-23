@@ -113,34 +113,29 @@ const matchDbUrl: DecoderRunFn<SudokuDataFormat.Lisudoku> = async (input: string
       matched: false,
     }
   }
+
   const id = match[1]
-
-  let puzzle: any
-  let status
-
-  // TODO: handle 404
   const response = await fetch(`${LISUDOKU_API_BASE_URL}/puzzles/${id}`)
-  const data = await response.json()
-  puzzle = camelCaseKeys(data)
-  const dataString = '' // TODO: compute it?
-
-  if (puzzle === undefined) {
+  if (response.status !== 200) {
     let error
-    if (status === 404) {
+    if (response.status === 404) {
       error = `[lisudoku] Puzzle with id ${id} not found.`
     } else {
       error = `[lisudoku] Request for puzzle with id ${id} failed.`
     }
     return {
       matched: true,
-      dataString,
+      dataString: '',
       error,
     }
   }
 
+  const data = await response.json()
+  const puzzle = camelCaseKeys(data)
+
   return {
     matched: true,
-    dataString,
+    dataString: '', // TODO: compute it?
     constraints: puzzle.constraints,
   }
 }

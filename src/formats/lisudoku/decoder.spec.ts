@@ -154,6 +154,15 @@ test('detects lisudoku puzzle by id', async () => {
   })
 })
 
+test('handles invalid id gracefully', async () => {
+  const result = await decoder.run(LISUDOKU_DB_PUZZLE_URL + 'invalid_id')
+  expect(result).toEqual({
+    matched: true,
+    dataString: '',
+    error: expect.stringContaining('not found'),
+  })
+})
+
 test('invalid lisudoku data should return error', async () => {
   const result = await decoder.run(LISUDOKU_SOLVER_INVALID_URL)
   expect(result).toEqual({
