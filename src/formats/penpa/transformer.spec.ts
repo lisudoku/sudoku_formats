@@ -16,9 +16,25 @@ const PENPA_CONSTRAINTS: PenpaConstraints = {
   space: [0, 0, 0, 0],
   sudoku: [1, 0, 0, 1],
   thermo: [[33, 34, 35, 49, 62]],
-  // Commented until killer cage is fixed
-  // killercages: [[54, 55, 67, 68, 80, 81]],
-  killercages: [],
+  killercages: [[54, 55, 67, 68, 80, 81]],
+  cage: {
+    "892,894": 10,
+    "892,893": 10,
+    "893,896": 10,
+    "894,944": 10,
+    "896,897": 10,
+    "897,899": 10,
+    "899,949": 10,
+    "944,946": 10,
+    "946,996": 10,
+    "949,951": 10,
+    "951,1001": 10,
+    "996,998": 10,
+    "999,1002": 10,
+    "998,999": 10,
+    "1001,1003": 10,
+    "1002,1003": 10
+  },
   arrows: [[72, 73, 74, 87, 100, 113]],
   number: {
     43: ["1", 1, "1"],
@@ -26,8 +42,7 @@ const PENPA_CONSTRAINTS: PenpaConstraints = {
     45: ["3", 1, "1"],
   },
   numberS: {
-    // Commented until killer cage is fixed
-    // 892: [" 22", 1],
+    892: [" 22", 1],
   },
   symbol: {
     106: [3, "circle_L", 2],
@@ -62,8 +77,7 @@ const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
       ],
     },
   ],
-  // Commented until killer cages are fixed
-  // killerCages: [{"sum":22,"region":[{"row":2,"col":0},{"row":2,"col":1},{"row":3,"col":0},{"row":3,"col":1},{"row":4,"col":0},{"row":4,"col":1}]}],
+  killerCages: [{"sum":22,"region":[{"row":2,"col":0},{"row":2,"col":1},{"row":3,"col":0},{"row":3,"col":1},{"row":4,"col":0},{"row":4,"col":1}]}],
   kropkiDots:[
     {dotType: KropkiDotType.Consecutive, cell1:{"row":7,"col":3},cell2:{"row":8,"col":3}},
     {dotType: KropkiDotType.Consecutive, cell1:{"row":8,"col":3},cell2:{"row":8,"col":4}},
@@ -89,6 +103,7 @@ const PENPA_CONSTRAINTS_2: PenpaConstraints = {
   sudoku: [1, 0, 0, 1],
   thermo: [],
   killercages: [],
+  cage: {},
   arrows: [],
   number: {
     46: ["3", 1, "1"],
@@ -135,6 +150,7 @@ const PENPA_CONSTRAINTS_3: PenpaConstraints = {
   sudoku: [0, 0, 0, 0],
   thermo: [],
   killercages: [],
+  cage: {},
   arrows: [],
   number: {},
   numberS: {},
@@ -181,13 +197,12 @@ test('transformToLisudoku', async () => {
       ...PENPA_CONSTRAINTS.thermo,
       [], // empty thermo should be ignored
     ],
-    killercages: [[123]],
   }
   const result = transformer.transformToLisudoku(penpaConstraintsWithUnimplemented)
 
   expect(result.dataString).toEqual(expect.any(String))
   expect(result.url).toContain(result.dataString)
-  expect(result.warning).toContain('killercages')
+  expect(result.warning).toBeUndefined()
 
   const decodedConstraints = (await decodeSudoku(result.dataString!)).constraints as LisudokuConstraints
   expect(decodedConstraints).toEqual({
@@ -220,11 +235,7 @@ test('transformToLisudoku - with offset only in 1 dimension', async () => {
 })
 
 test('transformFromLisudoku', async () => {
-  const lisudokuConstraintsWithUnimplemented: LisudokuConstraints = {
-    ...LISUDOKU_CONSTRAINTS,
-    killerCages: [{ sum: 3, region: [{ row: 0, col: 0 }] }],
-  }
-  const result = transformer.transformFromLisudoku(lisudokuConstraintsWithUnimplemented)
+  const result = transformer.transformFromLisudoku(LISUDOKU_CONSTRAINTS)
 
   expect(result.constraints).toEqual({
     ...PENPA_CONSTRAINTS,
@@ -233,7 +244,7 @@ test('transformFromLisudoku', async () => {
 
   expect(result.dataString).toEqual(expect.any(String))
   expect(result.url).toContain(result.dataString)
-  expect(result.warning).toContain('killerCages')
+  expect(result.warning).toBeUndefined()
 
   const decodedConstraints = (await decodeSudoku(result.dataString!)).constraints
   expect(decodedConstraints).toEqual({

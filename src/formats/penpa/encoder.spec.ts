@@ -17,6 +17,7 @@ const PENPA_MIN_CONSTRAINTS: PenpaConstraints = {
   thermo: [],
   arrows: [],
   killercages: [],
+  cage: {},
   number: {},
   numberS: {},
   symbol: {},

@@ -15,9 +15,10 @@ export type PenpaConstraints = {
   sudoku: [number, number, number, number]
   thermo: Thermo[]
   killercages: KillerCage[]
+  cage: Record<string, number> // cosmetic
   arrows: Arrow[]
-  number: { [key in number]: [string, number, string] }
-  numberS: { [key in number]: [string, number] }
-  symbol: { [key in number]: [number, string, number] }
+  number: Record<number, [string, number, string]>
+  numberS: Record<number, [string, number]>
+  symbol: Record<number, [number, string, number]>
   centerlist: number[]
 }

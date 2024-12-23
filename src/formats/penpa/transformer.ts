@@ -1,7 +1,7 @@
-import { fromPairs, inRange, isEmpty, orderBy, times, toPairs } from 'lodash-es'
+import { fromPairs, inRange, isEqual, merge, orderBy, range, times, toPairs } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
-import { CellPosition, FixedNumber, KropkiDot, KropkiDotType } from '../lisudoku/types'
+import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
 import { GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
 import { PenpaConstraints } from './types'
 import { encoder as penpaEncoder } from './encoder'
@@ -16,10 +16,6 @@ const cellArrayToIndices = (cells: CellPosition[], constraints: Pick<PenpaConstr
   cells.map((cell) => cellToIndex(cell, constraints))
 )
 
-const cellTopLeftIndex = (cell: CellPosition, constraints: PenpaConstraints) => (
-  4 * (cellToIndex(cell, constraints) + (constraints.rowCount + 4) * (constraints.colCount + 4))
-)
-
 const indexToCell = (index: number, constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => ({
   row: Math.floor(index / (constraints.colCount + 4)) - 2 - constraints.space[0],
   col: index % (constraints.colCount + 4) - 2 - constraints.space[2],
@@ -28,6 +24,19 @@ const indexToCell = (index: number, constraints: Pick<PenpaConstraints, 'colCoun
 const indexArraytoCells = (indices: number[], constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => (
   indices.map((index) => indexToCell(index, constraints))
 )
+
+const cellCornerIndex = (cell: CellPosition, corner: number, constraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'>) => (
+  4 * (cellToIndex(cell, constraints) + (constraints.rowCount + 4) * (constraints.colCount + 4)) + corner
+)
+
+const cellTopLeftIndex = (cell: CellPosition, constraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'>) => (
+  cellCornerIndex(cell, 0, constraints)
+)
+
+const topLeftIndexToCell = (index: number, constraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'>) => {
+  const cellIndex = Math.floor(index / 4) - (constraints.rowCount + 4) * (constraints.colCount + 4)
+  return indexToCell(cellIndex, constraints)
+}
 
 const kropkiDotToIndex = (dot: KropkiDot, constraints: Pick<PenpaConstraints, 'rowCount' | 'colCount' | 'space'>) => {
   const cells = orderBy([dot.cell1, dot.cell2], ['row', 'col'])
@@ -70,6 +79,63 @@ const buildKropki = (index: number, val: [number, string, number], constraints: 
       }
     }
   }
+}
+
+// 4x + 0 => top-left
+// 4x + 1 => top-right
+// 4x + 2 => bottom-left
+// 4x + 3 => bottom-right
+const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]]
+const DIRECTION_LINES = [[0, 1], [1, 3], [2, 3], [0, 2]]
+
+const regionToCagelines = (region: Region, constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
+  const cellLines: Record<string, boolean> = {}
+  const lines: Record<string, number> = {}
+  for (const cell of region) {
+    DIRECTIONS.forEach((dir, didx) => {
+      const otherCell = {
+        row: cell.row + dir[0],
+        col: cell.col + dir[1],
+      }
+      // if neighbour is not in region: draw line orthogonal line between them
+      if (!region.some(regionCell => isEqual(otherCell, regionCell))) {
+        cellLines[`${cellToIndex(cell, constraints)},${didx}`] = true
+        const line = DIRECTION_LINES[didx].map(corner => cellCornerIndex(cell, corner, constraints)).join(',')
+        lines[line] = 10 // 10 = cage style
+      }
+    })
+  }
+
+  for (const cell of region) {
+    DIRECTIONS.slice(1, 3).forEach((dir, didx) => {
+      didx += 1 // adjust indices to match slice
+      const otherCell = {
+        row: cell.row + dir[0],
+        col: cell.col + dir[1],
+      }
+      // if neighbour is in region: unite lines of the same type
+      if (region.some(regionCell => isEqual(otherCell, regionCell))) {
+        // take the other 2 orthogonal directions
+        const cellLineDirectionIndices = range(4).filter(d => d % 2 !== didx % 2)
+        for (const cellLineDirIdx of cellLineDirectionIndices) {
+          // if both have that line, unite them
+          if (
+            cellLines[`${cellToIndex(cell, constraints)},${cellLineDirIdx}`] &&
+            cellLines[`${cellToIndex(otherCell, constraints)},${cellLineDirIdx}`]
+          ) {
+            const fromCorner = DIRECTION_LINES[cellLineDirIdx][1]
+            const fromCellCorner = cellCornerIndex(cell, fromCorner, constraints)
+            const toCorner = DIRECTION_LINES[cellLineDirIdx][0]
+            const toCellCorner = cellCornerIndex(otherCell, toCorner, constraints)
+            const line = `${fromCellCorner},${toCellCorner}`
+            lines[line] = 10 // 10 = cage style
+          }
+        }
+      }
+    })
+  }
+
+  return lines
 }
 
 const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<LisudokuConstraints> => {
@@ -120,8 +186,18 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
     })),
     primaryDiagonal: Boolean(constraints.sudoku[0]),
     secondaryDiagonal: Boolean(constraints.sudoku[3]),
-    // Need to fix killer cages first
-    // killerCages: [],
+    killerCages: constraints.killercages.map(killerCage => {
+      const cageTopRightCells = killerCage.map(cellIndex => cellTopLeftIndex(indexToCell(cellIndex, constraints), constraints))
+      const cellWithNumber = cageTopRightCells.find(cellIndex => constraints.numberS[cellIndex] !== undefined)
+      let sum = null
+      if (cellWithNumber !== undefined) {
+        sum = Number(constraints.numberS[cellWithNumber][0])
+      }
+      return ({
+        sum,
+        region: indexArraytoCells(killerCage, constraints),
+      })
+    }),
     kropkiDots: toPairs(constraints.symbol)
       .filter(([_, val]) => val[1] === 'circle_SS')
       .map(([index, val]) => buildKropki(Number(index), val, constraints)),
@@ -152,13 +228,13 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
     ...lisudokuEncoder(normalizedConstraints)
   }
 
-  const PENPA_UNIMPLEMENTED_CONSTRAINTS = ['killercages']
-  const ignoredConstraints = [
-    ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field as keyof PenpaConstraints]))
-  ]
-  if (ignoredConstraints.length > 0) {
-    result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
-  }
+  // const PENPA_UNIMPLEMENTED_CONSTRAINTS = []
+  // const ignoredConstraints = [
+  //   ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field as keyof PenpaConstraints]))
+  // ]
+  // if (ignoredConstraints.length > 0) {
+  //   result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
+  // }
 
   return result
 }
@@ -182,9 +258,9 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     space: [0, 0, 0, 0],
   }
 
-  // TODO: Killer cage and primary diagonals not showing
+  // TODO: primary diagonals not showing
   // Not implemented: extra regions, renban and others
-  // Include some (like antiknigh into written rules?! antiknight, antiking, kropkiNegative)
+  // Include some (like antiknight into written rules?! antiknight, antiking, kropkiNegative)
   const newConstraints: PenpaConstraints = {
     ...auxConstraints,
     cellSize: 38,
@@ -193,9 +269,10 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     centerCellIndex: cellToIndex({ row: Math.floor(gridSize / 2), col: Math.floor(gridSize / 2) }, auxConstraints),
     sudoku: [Number(constraints.primaryDiagonal), 0, 0, Number(constraints.secondaryDiagonal)],
     thermo: (constraints.thermos ?? []).map((thermo) => cellArrayToIndices(thermo, auxConstraints)),
-    // Commented until killer cage is fixed
-    // killercages: (constraints.killerCages ?? []).map((cage) => cellArrayToIndices(cage.region, gridSize)),
-    killercages: [],
+    killercages: (constraints.killerCages ?? []).map((cage) => cellArrayToIndices(cage.region, auxConstraints)),
+    cage: {
+      ...merge({}, ...(constraints.killerCages ?? []).map(cage => regionToCagelines(cage.region, auxConstraints))),
+    },
     arrows: (constraints.arrows ?? [])
       .filter((arrow) => arrow.circleCells.length === 1)
       .map((arrow) => cellArrayToIndices([...arrow.circleCells, ...arrow.arrowCells], auxConstraints)),
@@ -206,12 +283,10 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
       ]
     )),
     numberS: fromPairs(
-      // Commented until killer cage is fixed
-      // (constraints.killerCages ?? []).map((cage) => [
-      //   cellTopLeftIndex(cage.region[0], gridSize),
-      //   [` ${cage.sum}`, 1],
-      // ])
-      []
+      (constraints.killerCages ?? []).map((cage) => [
+        cellTopLeftIndex(cage.region[0], auxConstraints),
+        [` ${cage.sum}`, 1],
+      ])
     ),
     symbol: fromPairs([
       ...(constraints.kropkiDots ?? []).map((dot) => [
@@ -235,13 +310,13 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     ...penpaEncoder(newConstraints)
   }
 
-  const PENPA_UNIMPLEMENTED_CONSTRAINTS = ['killerCages']
-  const ignoredConstraints = [
-    ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field as keyof LisudokuConstraints]))
-  ]
-  if (ignoredConstraints.length > 0) {
-    result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
-  }
+  // const PENPA_UNIMPLEMENTED_CONSTRAINTS = []
+  // const ignoredConstraints = [
+  //   ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field as keyof LisudokuConstraints]))
+  // ]
+  // if (ignoredConstraints.length > 0) {
+  //   result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
+  // }
 
   return result
 }
