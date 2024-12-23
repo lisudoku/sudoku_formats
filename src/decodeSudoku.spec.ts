@@ -87,6 +87,15 @@ test('detects that it is a grid string', async () => {
   })
 })
 
+test('ignores any whitespace', async () => {
+  const result = await decodeSudoku(` ${[...GRID_STRING].join(' ')} `)
+  expect(result).toEqual({
+    format: SudokuDataFormat.GridString,
+    dataString: GRID_STRING,
+    constraints: GRID_STRING,
+  })
+})
+
 test('works with url redirects', async () => {
   // The below url redirects to https://f-puzzles.com/?load=N4Igzgl....
   const result = await decodeSudoku('http://tinyurl.com/29ky3dfn')

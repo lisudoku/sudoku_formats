@@ -7,7 +7,7 @@ import { decoders } from './formats'
  * @returns {Promise<DecodeOutput>} Promise object that represents the parsing operation result
  */
 export const decodeSudoku = async (input: string, followRedirects = true): Promise<DecodeOutput> => {
-  const processedInput = input.trim()
+  const processedInput = [...input].filter(ch => ch !== ' ').join('')
 
   if (processedInput === '') {
     return {
