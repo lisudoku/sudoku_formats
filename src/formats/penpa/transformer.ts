@@ -2,7 +2,7 @@ import { fromPairs, inRange, isEmpty, isEqual, merge, orderBy, range, times, toP
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
 import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
-import { GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
+import { ensureDefaultRegions, GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
 import { PenpaConstraints } from './types'
 import { encoder as penpaEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
@@ -138,11 +138,56 @@ const regionToCagelines = (region: Region, constraints: Pick<PenpaConstraints, "
   return lines
 }
 
+const cellToLineIndex = (cell: CellPosition, constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => (
+  (constraints.colCount + 4) * (cell.row + 1) + (cell.col + 1) + (constraints.colCount + 4) * (constraints.colCount + 4)
+)
+
+const getRegionsLines = (regions: Region[], constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
+  const cellToRegion: Record<number, number> = {}
+  regions.forEach((region, regionIndex) => {
+    for (const cell of region) {
+      const cellIndex = cellToIndex(cell, constraints)
+      cellToRegion[cellIndex] = regionIndex
+    }
+  })
+
+  const lines: Record<string, number> = {}
+  for (const region of regions) {
+    for (const cell of region) {
+      const cellIndex = cellToIndex(cell, constraints)
+      const cellRegion = cellToRegion[cellIndex]
+      DIRECTIONS.slice(1, 3).forEach((dir, didx) => {
+        didx += 1 // adjust indices to match slice
+        const otherCell = {
+          row: cell.row + dir[0],
+          col: cell.col + dir[1],
+        }
+        const otherCellIndex = cellToIndex(otherCell, constraints)
+        const otherCellRegion = cellToRegion[otherCellIndex]
+        if (cellRegion !== otherCellRegion && otherCellRegion !== undefined) {
+          const orthogonalDirectionIndex = didx === 1 ? 2 : 1
+          const orthogonalDir = DIRECTIONS[orthogonalDirectionIndex]
+          const thirdCell = {
+            row: otherCell.row + orthogonalDir[0],
+            col: otherCell.col + orthogonalDir[1],
+          }
+          const index1 = cellToLineIndex(otherCell, constraints)
+          const index2 = cellToLineIndex(thirdCell, constraints)
+          const line = `${index1},${index2}`
+          lines[line] = 2 // grid line style
+        }
+      })
+    }
+  }
+
+  return lines
+}
+
 const getPrimaryDiagonalLines = (constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
   const lines: Record<string, number> = {}
-  for (let col = 1; col <= constraints.colCount; col++) {
-    const index1 = (constraints.colCount + 4) * col + col + (constraints.colCount + 4) * (constraints.colCount + 4)
-    const index2 = (constraints.colCount + 4) * (col + 1) + (col + 1) + (constraints.colCount + 4) * (constraints.colCount + 4)
+  for (let col = 0; col < constraints.colCount; col++) {
+    const index1 = cellToLineIndex({ row: col, col: col }, constraints)
+    const index2 = cellToLineIndex({ row: col + 1, col: col + 1 }, constraints)
     const line = `${index1},${index2}`
     lines[line] = 12 // diagonal line style
   }
@@ -151,9 +196,9 @@ const getPrimaryDiagonalLines = (constraints: Pick<PenpaConstraints, "colCount" 
 
 const getSecondaryDiagonalLines = (constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
   const lines: Record<string, number> = {}
-  for (let col = 1; col <= constraints.colCount; col++) {
-    const index1 = (constraints.colCount + 4) * col + constraints.colCount + 2 - col + (constraints.colCount + 4) * (constraints.colCount + 4)
-    const index2 = (constraints.colCount + 4) * (col + 1) + constraints.colCount + 2 - (col + 1) + (constraints.colCount + 4) * (constraints.colCount + 4)
+  for (let col = 0; col < constraints.colCount; col++) {
+    const index1 = cellToLineIndex({ row: col, col: constraints.colCount - col }, constraints)
+    const index2 = cellToLineIndex({ row: col + 1, col: constraints.colCount - (col + 1) }, constraints)
     const line = `${index2},${index1}`
     lines[line] = 12 // diagonal line style
   }
@@ -326,6 +371,7 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     lineE: {
       ...(constraints.primaryDiagonal ? getPrimaryDiagonalLines(auxConstraints) : {}),
       ...(constraints.secondaryDiagonal ? getSecondaryDiagonalLines(auxConstraints) : {}),
+      ...getRegionsLines(constraints.regions ?? ensureDefaultRegions(gridSize), auxConstraints),
     },
   }
 
