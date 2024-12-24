@@ -1,7 +1,7 @@
 {
   "name": "sudoku-formats",
-  "version": "1.0.5",
-  "description": "Convert between different sudoku formats (lisudoku, fpuzzles)",
+  "version": "1.0.6",
+  "description": "Convert between different sudoku formats (lisudoku, f-puzzles, penpa etc.)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/lisudoku/sudoku_formats",
@@ -19,6 +19,7 @@
     "convert",
     "lisudoku",
     "fpuzzles",
+    "f-puzzles",
     "penpa"
   ],
   "dependencies": {
