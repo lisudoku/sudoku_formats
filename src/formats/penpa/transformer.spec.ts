@@ -4,6 +4,7 @@ import { transformer } from './transformer';
 import { LisudokuConstraints } from '../lisudoku';
 import { KropkiDotType } from '../lisudoku/types';
 import { decodeSudoku } from '../../decodeSudoku';
+import { isEmpty } from 'lodash-es';
 
 // https://swaroopg92.github.io/penpa-edit/#m=solve&p=vVZLb9tGEL7rVwR7ngLcB5dc3tL0cUmdpnIRGIRg0DYTC6HMlJKagIbz2/PN7lImRQZFLgUlaubb5TcP7sxof7xrPx7J4dI5JSRx6Tzx39zwRwJl/HJ7aOriBb08Hu7bDgLRmwt6XzX7elXyFlybVSmkIKHwlWLztV9/LYUguVk99n8Vj/11UW6eqP/7WcyfxXXxiPtF8SiMFoUnkp6GhDEMgPUEpAzoAcBzEs/lTjH8QvFOBq8AysQC1CRut91tU1+/FqTAIKUL8P6fY9WdYGMTwPlp93odcGuYeglnX5dw9lAt4OzNOQ5Xf/PRK3+/LMpSa9KGdErGkVWbDfUaaKYo05ThxWQkE7wWqXnpF2SQ+sTfU39/7Yl+5fhzS9IhWBhVUpFS8IxllZLSeZDx7lUqg5xKUhYJZ9kaUlkW5Cwj5ZAdlh1OSILIIcvckUqQHcYT8MvIL8GvIr8Cv4n8Bvxp5E/BbyO/BX8e+XH6lAv8+IUtZM3zsP8RVxpy5FHgGcelhv0WcuRX4B/7o2JOFPzX0a6GXR39tJyHGJeFXRvtWtgd58dGuxZ2bbRrYXccl412LezaaNfCbhbsylzjHWE/3o+AgCTCCVYghMi84l8ZHveKxvMpfPJKyk5FgpDJgSAHgRsIXIpcDgQJipsrJtiBxwmiCnbgpkQoXjHICect2EEiDJwOdhB9OhBkHPJAkIMgiwQa5xTAEBy8lpxVHM93/pC+CpVLueOnE4oKR+YVDYWpvGLIcTMIisUKx+yVDApH5hX0MxMV7IcSCSCQG9iwhRyfeq/g2KOiBg3czrHPXnG8xIF6LcdSJOcneC06y7tOKkIzPkCLwsVBT1PCi8EJ4NYquWwzbnyrVYl0o+v63stXOtOm1/+J/CQThxtJgzvaOzq52LfN9f7Yva9ua1H4AYAuCuzhuLupuwnUtO2nZvsw3bf98NB29eISg/Xdh6X9N213d8b+uWqaCRB6+QQKfXYCHbrtRK+6rv08QXbV4X4C3FQHTL/9/fbTlKl+OEwdOFRTF6uP1Zm13XPMTyvxRfgvBpEkw2PSFf1b6n8P828YpNS/xZz8o+iveEyGkco93m/CWEGjP4nv/DpLr+IQTSBfsMwK5CvI07HU/1mUPWYhW/rZP8+i2LX/wlU/Z71+2+5uEEwpRukIK+FvxDC1eZ69DA6vFxzWzw6zGBxmaeZwcG7kL6Y0E7G7l991lxP3A+66zVN4EckP/UsJ/znCn4z5/A7z+r9G89AM+zfjbjhuHKcu8SUWXtst1h7ghfIDulhmEZ9VGvBZTbHBeVkBXagsoOfFBWheXwBnJQbsO1XGrOeFxl6d1xqbmpUbmxpXHDqYl74B
 const PENPA_CONSTRAINTS: PenpaConstraints = {
@@ -16,7 +17,10 @@ const PENPA_CONSTRAINTS: PenpaConstraints = {
   space: [0, 0, 0, 0],
   sudoku: [1, 0, 0, 1],
   thermo: [[33, 34, 35, 49, 62]],
-  killercages: [[54, 55, 67, 68, 80, 81]],
+  killercages: [
+    [54, 55, 67, 68, 80, 81],
+    [], // empty cage, should be ignored
+  ],
   cage: {
     "892,894": 10,
     "892,893": 10,
@@ -268,6 +272,7 @@ test('transformFromLisudoku', async () => {
     ...PENPA_CONSTRAINTS,
     centerlist: expect.any(Array), // could check that the numbers are the same, but meh
     lineE: expect.objectContaining(PENPA_CONSTRAINTS.lineE),
+    killercages: PENPA_CONSTRAINTS.killercages.filter(cage => !isEmpty(cage)),
   })
 
   expect(result.dataString).toEqual(expect.any(String))
@@ -278,5 +283,6 @@ test('transformFromLisudoku', async () => {
   expect(decodedConstraints).toEqual({
     ...PENPA_CONSTRAINTS,
     centerlist: expect.any(Array),
+    killercages: PENPA_CONSTRAINTS.killercages.filter(cage => !isEmpty(cage)),
   })
 })

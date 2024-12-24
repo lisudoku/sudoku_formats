@@ -208,7 +208,7 @@ const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<Lis
     })),
     primaryDiagonal: Boolean(constraints.sudoku[0]),
     secondaryDiagonal: Boolean(constraints.sudoku[3]),
-    killerCages: constraints.killercages.map(killerCage => {
+    killerCages: constraints.killercages.filter(killerCage => !isEmpty(killerCage)).map(killerCage => {
       const cageTopRightCells = killerCage.map(cellIndex => cellTopLeftIndex(indexToCell(cellIndex, constraints), constraints))
       const cellWithNumber = cageTopRightCells.find(cellIndex => constraints.numberS[cellIndex] !== undefined)
       let sum = null
