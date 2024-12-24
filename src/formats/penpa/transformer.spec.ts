@@ -54,6 +54,27 @@ const PENPA_CONSTRAINTS: PenpaConstraints = {
     646: [2, "circle_SS", 2],
   },
   centerlist: [28,1,3,1,1,1,1,5,1,3,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,-109,-1,14,-1],
+  lineE: {
+    // omitted grid lines from this map
+    "183,197": 12,
+    "197,211": 12,
+    "211,225": 12,
+    "225,239": 12,
+    "239,253": 12,
+    "253,267": 12,
+    "267,281": 12,
+    "281,295": 12,
+    "295,309": 12,
+    "204,192": 12,
+    "216,204": 12,
+    "228,216": 12,
+    "240,228": 12,
+    "252,240": 12,
+    "264,252": 12,
+    "276,264": 12,
+    "288,276": 12,
+    "300,288": 12,
+  },
 }
 
 const LISUDOKU_DATA_STRING = 'N4Ig5gTglgJgylAXgUxALgJwBoQDMoAeyMAcgK4C2ARshAM7oDaoADgPZ1QAuUbAdulAQ2Ad3QBGHAGM2AG3QAmAL44AbgENZZVGnErWHbrwFohoidLnoAzCpAatO5VgOce%2FQSGFjdl%2BWgAWOwdtGyUAXRwIZDBjBjRGZi9zNAAGP3RU%2FWSfdJAZfz0XHMyMtGczXLLbYu8LfKs07LrfBsLmlIUyrNrOsqLKxTLlSKSWvIL0IN6qtvQAVg6fSTnypfrJtBrB1s3pnZXNxZmh1e2S8rL9i67VxdGdicaANnW0soB2N6f%2FAA43w4vAGfYGrf4nS6rV4Q26bL4wsr%2FB4XazdN6o1YDFHDN4BNEQvGY3E4iHzfE7MlE0k45EtDGbc50q7osrHHaEhnE1bXFocxpsi6UznU7lvIX8iJYMYpelAiGy%2FzwnYK9Dg9llaHq1ZKi58v5ijUG7VGzZIqU7Z7ki6WqkWkk7D5WlqO20XF2bCoXX5OlLe10tP0eyXSnw24V20UQsMSiHuxqMlJx%2Fw8xOst6B%2BPp5kQjP%2Be7m62GqMg4tgt5J9Cat0lh2IrNQ%2BtwxuNJGREDIAhcCDqABKMTiTBDU36XKDBOqJsanpa4v8CdD9sLZze0eT5eZ4TbXAAFrQKBxB480xCfpXvjWLoD9Qiy5ucOoIN54kkpFAIFJZMgAMLIWSyZ%2FKtmgF3JKIAPt4P5%2FgB2INvKF68vBKSzugOotKuKERKBLDQBQD4AJ4ACJQOoYD8Jo6BdtoOB0MgMh8DA%2BFESRZH%2BJRyD3nwPAANJ8FAYDblwFEQFRYGcVAXFQHwYBCSJADWUB%2FrQX4kcg0F0JQii3NEsQeAkOywo0PT6SOcGrEZMGbFiCFmaOjR6OEoGycILDyQRbBcNBMDuQAKnhLA6CAX78DRUhkDwqioNIv6yOIngBhOUV%2FgocW%2Bsy2ReVwvn%2BeggXBbRYVQBFICJTFKU%2BLmCx2FI0XJaYXppcUGVZQFblkFQn7Ffk0WxXV8WwV1SVlaqILpT5fktWwbUdSVPU7BVaDggNsi1XNI1tmwMAwJB%2F5MBGmxZG2yARXw23Qc6aIOUAA%3D%3D%3D'
@@ -119,6 +140,7 @@ const PENPA_CONSTRAINTS_2: PenpaConstraints = {
   numberS: {},
   symbol: {},
   centerlist: [], // skipped, doesn't matter
+  lineE: {}, // omitted grid lines
 }
 
 const LISUDOKU_CONSTRAINTS_2: LisudokuConstraints = {
@@ -162,6 +184,7 @@ const PENPA_CONSTRAINTS_3: PenpaConstraints = {
     670: [8, "circle_SS", 2],
   },
   centerlist: [], // skipped, doesn't matter
+  lineE: {}, // omitted grid lines
 }
 
 const LISUDOKU_CONSTRAINTS_3: LisudokuConstraints = {
@@ -235,16 +258,21 @@ test('transformToLisudoku - with offset only in 1 dimension', async () => {
 })
 
 test('transformFromLisudoku', async () => {
-  const result = transformer.transformFromLisudoku(LISUDOKU_CONSTRAINTS)
+  const lisudokuConstraintsWithUnimplemented: LisudokuConstraints = {
+    ...LISUDOKU_CONSTRAINTS,
+    renbans: [[{ row: 1, col: 1 }]],
+  }
+  const result = transformer.transformFromLisudoku(lisudokuConstraintsWithUnimplemented)
 
   expect(result.constraints).toEqual({
     ...PENPA_CONSTRAINTS,
     centerlist: expect.any(Array), // could check that the numbers are the same, but meh
+    lineE: expect.objectContaining(PENPA_CONSTRAINTS.lineE),
   })
 
   expect(result.dataString).toEqual(expect.any(String))
   expect(result.url).toContain(result.dataString)
-  expect(result.warning).toBeUndefined()
+  expect(result.warning).toEqual('Ignored some constraints: renbans')
 
   const decodedConstraints = (await decodeSudoku(result.dataString!)).constraints
   expect(decodedConstraints).toEqual({

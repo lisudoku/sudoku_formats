@@ -1,4 +1,4 @@
-import { fromPairs, inRange, isEqual, merge, orderBy, range, times, toPairs } from 'lodash-es'
+import { fromPairs, inRange, isEmpty, isEqual, merge, orderBy, range, times, toPairs } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
 import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
@@ -138,6 +138,28 @@ const regionToCagelines = (region: Region, constraints: Pick<PenpaConstraints, "
   return lines
 }
 
+const getPrimaryDiagonalLines = (constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
+  const lines: Record<string, number> = {}
+  for (let col = 1; col <= constraints.colCount; col++) {
+    const index1 = (constraints.colCount + 4) * col + col + (constraints.colCount + 4) * (constraints.colCount + 4)
+    const index2 = (constraints.colCount + 4) * (col + 1) + (col + 1) + (constraints.colCount + 4) * (constraints.colCount + 4)
+    const line = `${index1},${index2}`
+    lines[line] = 12 // diagonal line style
+  }
+  return lines
+}
+
+const getSecondaryDiagonalLines = (constraints: Pick<PenpaConstraints, "colCount" | "space" | "rowCount">) => {
+  const lines: Record<string, number> = {}
+  for (let col = 1; col <= constraints.colCount; col++) {
+    const index1 = (constraints.colCount + 4) * col + constraints.colCount + 2 - col + (constraints.colCount + 4) * (constraints.colCount + 4)
+    const index2 = (constraints.colCount + 4) * (col + 1) + constraints.colCount + 2 - (col + 1) + (constraints.colCount + 4) * (constraints.colCount + 4)
+    const line = `${index2},${index1}`
+    lines[line] = 12 // diagonal line style
+  }
+  return lines
+}
+
 const transformToLisudoku = (constraints: PenpaConstraints): TransformOutput<LisudokuConstraints> => {
   const rowCountFinal = constraints.rowCount - constraints.space[0] - constraints.space[1]
   const colCountFinal = constraints.colCount - constraints.space[2] - constraints.space[3]
@@ -258,8 +280,6 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     space: [0, 0, 0, 0],
   }
 
-  // TODO: primary diagonals not showing
-  // Not implemented: extra regions, renban and others
   // Include some (like antiknight into written rules?! antiknight, antiking, kropkiNegative)
   const newConstraints: PenpaConstraints = {
     ...auxConstraints,
@@ -303,6 +323,10 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
       ]),
     ]),
     centerlist,
+    lineE: {
+      ...(constraints.primaryDiagonal ? getPrimaryDiagonalLines(auxConstraints) : {}),
+      ...(constraints.secondaryDiagonal ? getSecondaryDiagonalLines(auxConstraints) : {}),
+    },
   }
 
   const result: TransformOutput<PenpaConstraints> = {
@@ -310,13 +334,13 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     ...penpaEncoder(newConstraints)
   }
 
-  // const PENPA_UNIMPLEMENTED_CONSTRAINTS = []
-  // const ignoredConstraints = [
-  //   ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field as keyof LisudokuConstraints]))
-  // ]
-  // if (ignoredConstraints.length > 0) {
-  //   result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
-  // }
+  const PENPA_UNIMPLEMENTED_CONSTRAINTS: (keyof LisudokuConstraints)[] = ['renbans', 'extraRegions']
+  const ignoredConstraints = [
+    ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field]))
+  ]
+  if (ignoredConstraints.length > 0) {
+    result.warning = 'Ignored some constraints: ' + ignoredConstraints.join(', ')
+  }
 
   return result
 }

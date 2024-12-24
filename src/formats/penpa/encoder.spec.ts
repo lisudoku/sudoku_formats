@@ -18,6 +18,7 @@ const PENPA_MIN_CONSTRAINTS: PenpaConstraints = {
   arrows: [],
   killercages: [],
   cage: {},
+  lineE: {},
   number: {},
   numberS: {},
   symbol: {},

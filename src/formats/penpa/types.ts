@@ -21,4 +21,5 @@ export type PenpaConstraints = {
   numberS: Record<number, [string, number]>
   symbol: Record<number, [number, string, number]>
   centerlist: number[]
+  lineE: Record<string, number> // cosmetic
 }

@@ -51,6 +51,27 @@ export const PENPA_CONSTRAINTS: PenpaConstraints = {
     646: [2, "circle_SS", 2],
   },
   centerlist: [28,1,3,1,1,1,1,5,1,3,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,-109,-1,14,-1],
+  lineE: {
+    // omitted grid lines from this map
+    "183,197": 12,
+    "197,211": 12,
+    "211,225": 12,
+    "225,239": 12,
+    "239,253": 12,
+    "253,267": 12,
+    "267,281": 12,
+    "281,295": 12,
+    "295,309": 12,
+    "204,192": 12,
+    "216,204": 12,
+    "228,216": 12,
+    "240,228": 12,
+    "252,240": 12,
+    "264,252": 12,
+    "276,264": 12,
+    "288,276": 12,
+    "300,288": 12,
+  }
 }
 export const PENPA_INVALID_URL = 'https://swaroopg92.github.io/penpa-edit/#m=solve&p=1234'
 
@@ -59,6 +80,9 @@ test('detects penpa puzzle with url', async () => {
   expect(result).toEqual({
     matched: true,
     dataString: PENPA_DATA_STRING,
-    constraints: PENPA_CONSTRAINTS,
+    constraints: {
+      ...PENPA_CONSTRAINTS,
+      lineE: expect.objectContaining(PENPA_CONSTRAINTS.lineE),
+    },
   })
 })
