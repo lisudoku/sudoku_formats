@@ -1,8 +1,9 @@
-import { compressToBase64 } from 'lz-string';
-import { Encoder, EncodeResult } from '../../types';
-import { normalizeConstraints } from './utils';
-import { LisudokuConstraints } from './types';
+import { compressToBase64 } from 'lz-string'
+import { Encoder, EncodeResult } from '../../types'
+import { normalizeConstraints } from './utils'
+import { LisudokuConstraints } from './types'
 import { transformer as gridStringTransformer } from '../gridstring'
+import { stableStringify } from '../utils'
 
 const encodeDataString = (constraints: LisudokuConstraints): string => {
   const gridStringTransformResult = gridStringTransformer.transformFromLisudoku(constraints)
@@ -11,7 +12,7 @@ const encodeDataString = (constraints: LisudokuConstraints): string => {
   }
 
   const filteredConstraints = normalizeConstraints(constraints)
-  const constraintsStr = JSON.stringify(filteredConstraints)
+  const constraintsStr = stableStringify(filteredConstraints)
   const encodedData = encodeURIComponent(compressToBase64(constraintsStr))
   return encodedData
 }

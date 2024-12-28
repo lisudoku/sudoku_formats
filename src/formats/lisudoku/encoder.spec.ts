@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { LisudokuConstraints } from './types';
 import { encoder } from './encoder';
 
-export const LISUDOKU_DATA_STRING = 'N4Ig5gTglgJgylAXgUxALgJwBoQDMoAeyMAcgK4C2ARshAM7oDaoADgPZ1QAuUbAdulAQ2Ad3QBGHAGM2AG3QBWAL44AbgENZZVGgDsK1h268BaIaInS56AGwqQGrToAcBkO049%2BgkMLFpJEBl5PXtHbXQMJQBdHAhkMBMGNEZmXws0AAYrEMy3P3RsoOsA%2FIyi4PQAJjL%2FQMqs2stikPEmgJzq9vqSgGZ2qs7GrHN%2FQZaJGKw0gqyh%2FpH0%2FwqSgBZ2lZDlRdmekPWdjL3FAaGaw7H504m0A9HqoeVYmfKhuwvCof0PuZvXH%2BOaHe9w6N2%2BIMB%2FxB4wawKWDzB1warmeIN6QzyP3RNzaWLO7VWGIJQ1xIMJN3OIIURJ%2B1Jx7TpDRqqPhaGxDQWaKGd1Z7JK2zJVx%2B5IaPNmIv5DKFVO5UpuT2mXJucNmfJC4N5QyhrIlIRVGV16A14q1cthZpKxoyjJKKMVrJsNJBjvpPxdTPauidrK9rpBvo9P2c3tmwb9rLDHpZs3dfXasf28cenulPtlPwDkqDqdD6ZBkcl0YyCdsScRbtNGbeKfL%2Fsr%2Ber2drEdN0ViIGQBC4EHUACUEkkmC9%2FDbWhaQpSHSSy4G6%2BHZpmJzWOcu1u0CyF%2Bm2cFwABa0CgcIdK2c6%2FHCnPWy8j2XbkDqCB%2BZJpKRQCBSWTIADCyFksmfc7mlWiLtg%2Bfg%2Fn%2BAFpn8M62uO6DaiaMEXiBUzuNAFAPgAngAIlA6hgPwmjoN22g4HQyAyHwMDYXhBFESEpHIDg6h8DwADSfBQGAu5cCREBkfebFQOxUB8GA%2FGCWwMAwBB%2F5MBC07tsgqjIHwclQbsRLtvEfBUKxz7DgiDQCpqyrEuZKEmTE0RKEAA%3D%3D%3D'
+export const LISUDOKU_DATA_STRING = 'N4IghgdgLglg0jCBzEAuKAnArgUwDTjTwQxIAWUamuBYGGA9gO4DOaA2qHY0wMI4AbAW1ScQAYwYC0ADgI80AdgC%2BeUJOmo5IBagBsq9VNnzmaAKyGJxraaZoALFY1K7j5QF0C4mBnECcfiERMRd9N1QVNWtNRQiVD08CHAA3HAgg4Q4jTQAGCIBGJJAcAA9MMAAlHCQYBggQ0JsCiMtosIAmVudmiIN2my6dM30ezRbh%2B0ixtCHdKJy0AGZ4mdQHVYHNFcnZTy8QADMYUpwAEwA5LABbACMcDBDQAAcGFhhYerRF1HNC1RAKTAAlwSisr3enwg3xiaD0%2FwIQJBOD20QhHzq0NQPziu1QRURwNBqAAnMUkBgYGcAMowABeKNJBAYZzOmSesPx%2FwOz2BiDOjGuOEaPw2eJkaz%2BeIWnPheP6OO6Hh5lOudAAngARGBgJD1YFUbD4HQ1TEizn5PG5NYTXTWrazCL2n6W3QEn62kbuzlzL1rHZutaukYdG0RUNeJrbJ1rMV2yUxh3rBE%2FKWBpO%2BqahpMBkOx8MJvERvBRuGJxVWtbaeNJuXpiv1znVv21gtJ3G6bM%2FZtZpKl1DBqZLMN44cZiJjl0RJxJz1TGc%2FTPuJODiwj3RtRdKks%2FXND%2FOjwu6SecvfL0XTo8jBen7pJuMjTectOPvs%2FOsjE9hDufqsTtYfvOaw%2FkBSY9uesp3g2r5gdu%2FarqMs59GsS6IVO0rriMMqdJs6G6BKSHiihEQSpGu7IfeFGplRt4YZRdHUQxtH4QeLFJi%2BUykTukHysBNFhOBaE8fMfFMQJuHCSMBHQZxf5Ecq8jpLckDmmEHGzAB%2F6tniN5qZeCkgCwOCSBAZwatqur6po1DGlAZAPNcbwcP2qFfoMl45h55F4k%2BYQPlMljKsoQA%3D%3D'
 export const LISUDOKU_SOLVER_URL = `https://lisudoku.xyz/solver?import=${LISUDOKU_DATA_STRING}`
 export const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
   gridSize: 9,
@@ -86,6 +86,9 @@ export const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
   evenCells: [{ row: 1, col: 0 }],
   renbans: [
     [{ row: 2, col: 5 }, { row: 3, col: 6 }, { row: 4, col: 6 }, { row: 4, col: 5 }],
+  ],
+  palindromes: [
+    [{ row: 8, col: 4 }, { row: 7, col: 5 }, { row: 6, col: 6 }, { row: 5, col: 7 }],
   ],
 }
 export const LISUDOKU_SOLVER_INVALID_URL = 'https://lisudoku.xyz/solver?import=1234'

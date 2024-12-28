@@ -9,7 +9,7 @@ import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
 
 const FPUZZLES_UNIMPLEMENTED_CONSTRAINTS: string[] = [
   'disjointgroups', 'littlekillersum', 'minimum', 'maximum',
-  'rowindexer', 'columnindexer', 'boxindexer', 'palindrome', 'whispers', 'regionsumline',
+  'rowindexer', 'columnindexer', 'boxindexer', 'whispers', 'regionsumline',
   'xv', 'clone', 'quadruple', 'betweenline', 'sandwichsum', 'xsum', 'skyscraper', 'entropicline',
   'cage', 'text',
   // Removed 'disabledlogic' and 'truecandidatesoptions' because they seem related to the solver
@@ -124,6 +124,7 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
     evenCells: (constraints.even ?? []).map(({ cell }: { cell: string }) => cellStringToObject(cell)),
     topBottom: false,
     renbans: flatMap(constraints.renban ?? [], ({ lines }) => lines.map(mapCellStringArray)),
+    palindromes: flatMap(constraints.palindrome ?? [], ({ lines }) => lines.map(mapCellStringArray)),
   }
 
   const normalizedConstraints = normalizeConstraints(newConstraints)
@@ -198,6 +199,9 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     // negative: [], // probably should include something here
     renban: constraints.renbans?.map(renban => ({
       lines: [renban.map(cellObjectToString)],
+    })),
+    palindrome: constraints.palindromes?.map(palindrome => ({
+      lines: [palindrome.map(cellObjectToString)],
     })),
     line: [
       ...(constraints.renbans ?? []).map(renban => ({

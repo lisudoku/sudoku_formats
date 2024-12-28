@@ -39,6 +39,10 @@ type Renban = {
   lines: Cell[][]
 }
 
+type Palindrome = {
+  lines: Cell[][]
+}
+
 type CosmeticLine = {
   lines: Cell[][]
   outlineC: string
@@ -65,5 +69,6 @@ export type FpuzzlesConstraints = {
   negative?: string[] // could be further restricted if I figure out all the values :)
   disjointgroups?: boolean
   renban?: Renban[]
+  palindrome?: Palindrome[]
   line?: CosmeticLine[]
 }

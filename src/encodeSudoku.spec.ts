@@ -5,7 +5,7 @@ import { ensureDefaultRegions } from './formats/lisudoku/utils';
 import { LisudokuConstraints } from './formats/lisudoku';
 import { FpuzzlesConstraints } from './formats/fpuzzles';
 
-const LISUDOKU_DATA_STRING = 'N4Ig5gTglgJgylAXgUxALgJwBoQDMoAeyMAcgK4C2ARshAM7oDaoADgPZ1QAuUbAdulAQ2Ad3QAGHAGM2AGwkBfHADcAhrLKo0ARgUBdHC2gVVEAJ4ARKKrD916LhE05VfHgGkofMA6fIcbDAwAMLIsrIMaMwgwmI60nLoAKz6CkA%3D%3D%3D'
+const LISUDOKU_DATA_STRING = 'N4IghgdgLglg0jCBzEAuKAnArgUwDQgBmMAHjgCYByWAtgEY4YDOaA2qAA4D2TMsXENKADGXADZoADAQxcA7lIC%2BBAG5gxuNAEZFAXQJIMMcgGUYALxxoAnAS7lyAYRxixLVOxCiJqAKwz5bT0CDiMaMAwATwARGDAkAXU0TFxFIA%3D%3D%3D'
 const LISUDOKU_SOLVER_URL = `https://lisudoku.xyz/solver?import=${LISUDOKU_DATA_STRING}`
 const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
   gridSize: 9,

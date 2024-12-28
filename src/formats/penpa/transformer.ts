@@ -380,7 +380,7 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     ...penpaEncoder(newConstraints)
   }
 
-  const PENPA_UNIMPLEMENTED_CONSTRAINTS: (keyof LisudokuConstraints)[] = ['renbans', 'extraRegions']
+  const PENPA_UNIMPLEMENTED_CONSTRAINTS: (keyof LisudokuConstraints)[] = ['renbans', 'palindromes', 'extraRegions']
   const ignoredConstraints = [
     ...PENPA_UNIMPLEMENTED_CONSTRAINTS.filter(field => !isEmpty(constraints[field]))
   ]

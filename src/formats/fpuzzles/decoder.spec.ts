@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { decoder } from './decoder'
 import { FpuzzlesConstraints } from './types';
 
-export const FPUZZLES_DATA_STRING = 'N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSTQMY0IB7AOwQAYLXz3iBdZQty6uo3gBGVADcAhgBsArnBGoaYmEIAuGORRCTZ8gEyKIytRphadchAGZDxhOs0c+Rbryfuyn1q68fnTn39fYO8eEL8/QIjwryiYoNC3eOiXbhAYAA91CSoaBnxQAGMYKSkwfBAAJQBWAGE9EFQa2qtGqrqAFjbKgDYW7r6upoB2fpHaoarR6u6ADlqZzhdUVQALGAwAW1pNmFUNgpApCHoYcvgCKuFanu7r4bva2e69WsRuqzeQTiW0nIxaAB3Q7FUrnPBVDoLbpQ25pY6ncEQyqwmG1B5NKHPJp1bFVPp4yqjZ4/ZYgbAQCRoBjSADU9lMqApVJpUgAtAy5KgJPRVBAANb0CBoVaqTkwbm8gUnNDipkQABmCo2KmKIJKZQqlUQE26OsWWlBmouVR1tya+u+ZIwEj5tHVYK1OoxpqeVtIICN4Nd7wtbt+qFo2FwFyKGoQU1qwhAZJgdlDnvD8Cq82jZP5EFKG0KVPkhETjpNlU+0aanwamKjaIr7SrOPq33E0ksyb0DWtKgARjzDgizvhkaNS5Ga70xrXJs0ZpXzbWXc1CX13qT4Sc86A+0jI8OiQ2mn1WvXJ3Vp5Cbt06vPcQMvj9AzJVH3ahHMBIAJ5tQE4NbMAB0BhACAwAAORgQFagYMBshOMV4AcMwliAA='
+export const FPUZZLES_DATA_STRING = 'N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSTQMY0IB7AOwQAYLXz3iBdZQty6uo3gBGVADcAhgBsArnBGoaYmEIAuGORRCTZ8gEyKIytRphadchAGZDxhOs0c+Rbryfuyn1q68fnTn39fYO8eEL8/QIjwryiYoNC3eOiXbhBsCAk0BmkAantTVAysnKkAWgK5VAl6VQgAa3oINAALVUqYatqGiHo0DtQYAA91CSoaBnxQAGMYKSkwfBAAJQBWAGE9EFQ19attlY2AFgPlgDY904uTnYB2S7v1m5X71dOADnW3zhdUWmxcPBCCBZvMEC91sIQL8QDA7ECZnMpODlp8oTDVC0YBgALa0HEwVTYqYgKS9GCLIF4FbCdZnU6024M9bvU56daIU5WDkgTg/NIAB2kvWwGHx8mBZPoFPw1OWtLeO3Z9J23KZqpZvP5qCo9AARjUSVKZVSIVDHlsdhd9jtjqcNoqVkc6fb1urDpqrTy+TD6hB5tjplkJYj5pS5dzzStuZanZDTs7Y7so7stmkLPIQHotjCMgAzPPYlSzEmghZLZaIJ6nKvfLRl8MrKsqptfXkwjASOq0UtIxuVt01zU/UggvsVqucnZV1nakBjMUAdyN5PDcudLeWzvdW89HtZXoPENnaQbFedjt39LnxpX0rXZtO9yT1tdz12l43rp3GyP529aS0DIqjGus4KYBIACeByLjgmLMAAdAYIAQGAAByMCLusDBgKMvTtPAAAEDhmD8QA==='
 export const FPUZZLES_URL = `https://f-puzzles.com/?load=${FPUZZLES_DATA_STRING}`
 export const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
   size: 9,
@@ -40,6 +40,7 @@ export const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
     }
   ],
   renban: [{"lines":[["R7C1","R7C2","R6C3","R5C4","R5C5","R4C6","R5C7","R5C8","R6C9"]]}],
+  palindrome: [{"lines":[["R1C5","R2C6","R3C7","R3C8"]]}],
   line: [
     {
       lines: [["R7C1","R7C2","R6C3","R5C4","R5C5","R4C6","R5C7","R5C8","R6C9"]],

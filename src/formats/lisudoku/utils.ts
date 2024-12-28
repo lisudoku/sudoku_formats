@@ -99,6 +99,9 @@ export const detectVariant = (constraints: LisudokuConstraints | null) => {
   if (!isEmpty(constraints.renbans)) {
     variants.push(SudokuVariant.Renban)
   }
+  if (!isEmpty(constraints.palindromes)) {
+    variants.push(SudokuVariant.Palindrome)
+  }
   if (variants.length > 1) {
     return SudokuVariant.Mixed
   } else if (variants.length === 1) {

@@ -39,6 +39,8 @@ export enum KropkiDotType {
 
 export type Renban = CellPosition[]
 
+export type Palindrome = CellPosition[]
+
 export type LisudokuConstraints = {
   gridSize: number
   regions?: Region[]
@@ -57,6 +59,7 @@ export type LisudokuConstraints = {
   evenCells?: CellPosition[]
   topBottom?: boolean
   renbans?: Renban[]
+  palindromes?: Palindrome[]
 }
 
 export enum SudokuVariant {
@@ -74,4 +77,5 @@ export enum SudokuVariant {
   ExtraRegions = 'extraregions',
   OddEven = 'oddeven',
   Renban = 'renban',
+  Palindrome = 'palindrome',
 }
