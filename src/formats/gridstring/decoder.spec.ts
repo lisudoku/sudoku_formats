@@ -2,7 +2,8 @@ import { expect, test } from 'vitest'
 import { decoder } from './decoder'
 
 const GRID_STRING = '000000000000000010000000200000003000000040000000500000000000000000000000000000000'
-const GRID_STRING_LETTERS = '00000000000x0000'
+const GRID_STRING_DOTS = '...1..2..3..4...'
+const GRID_STRING_LETTERS = '000y0000000x0000'
 const GRID_STRING_INVALID_LENGTH = '000000'
 const GRID_STRING_INVALID_DIGIT = '0000000000000005'
 
@@ -19,6 +20,15 @@ test('detects grid string', async () => {
     matched: true,
     dataString: GRID_STRING,
     constraints: GRID_STRING,
+  })
+})
+
+test('detects grid string with dots', async () => {
+  const result = await decoder.run(GRID_STRING_DOTS)
+  expect(result).toEqual({
+    matched: true,
+    dataString: GRID_STRING_DOTS.replaceAll('.', '0'),
+    constraints: GRID_STRING_DOTS.replaceAll('.', '0'),
   })
 })
 

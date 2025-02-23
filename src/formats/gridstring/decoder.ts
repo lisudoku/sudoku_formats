@@ -1,12 +1,16 @@
+import { uniq } from 'lodash-es';
 import { Decoder, DecoderRunFn, SudokuDataFormat } from '../../types';
 
-const run: DecoderRunFn<SudokuDataFormat.GridString> = async (input: string) => {
+const run: DecoderRunFn<SudokuDataFormat.GridString> = async (rawInput: string) => {
   // If it only contains digits, it's probably a grid string.
-  if ([...input].some(c => c < '0' || c > '9')) {
+  // We allow 1 non-digit character and assume it's the separator
+  if (uniq([...rawInput].filter(c => c < '0' || c > '9')).length > 1) {
     return {
       matched: false,
     }
   }
+
+  const input = [...rawInput].map(c => (c < '0' || c > '9') ? '0' : c).join('')
 
   // Check length
   const gridSize = Math.sqrt(input.length)
