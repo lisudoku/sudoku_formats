@@ -438,6 +438,11 @@ isexe@^2.0.0:
   resolved "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
   integrity sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
 
+lisudoku-solver@0.1.29:
+  version "0.1.29"
+  resolved "https://registry.yarnpkg.com/lisudoku-solver/-/lisudoku-solver-0.1.29.tgz#a845cca69e093214d5814009d0e23da881e1f32a"
+  integrity sha512-0VVRhJezC/20Xl6kIASnDzcs+I51RMj05BAVcwZHZypNyOURR4/HVL4MY+ixZ+MeCVi0ugpVRN+QeWHIB1HU1w==
+
 lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz"

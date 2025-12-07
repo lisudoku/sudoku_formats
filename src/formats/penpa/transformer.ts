@@ -1,11 +1,11 @@
 import { fromPairs, inRange, isEmpty, isEqual, merge, orderBy, range, times, toPairs } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
-import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
 import { ensureDefaultRegions, GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
 import { PenpaConstraints } from './types'
 import { encoder as penpaEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
+import type { CellPosition, FixedNumber, KropkiDot, Region } from 'lisudoku-solver'
 
 // Simplifies formula because spaces will be 0
 const cellToIndex = (cell: CellPosition, constraints: Pick<PenpaConstraints, 'colCount' | 'space'>) => (
@@ -51,7 +51,7 @@ const kropkiDotToIndex = (dot: KropkiDot, constraints: Pick<PenpaConstraints, 'r
 }
 
 const buildKropki = (index: number, val: [number, string, number], constraints: PenpaConstraints): KropkiDot => {
-  const dotType = val[0] === 1 || val[0] === 8 ? KropkiDotType.Consecutive : KropkiDotType.Double
+  const dotType = val[0] === 1 || val[0] === 8 ? 'Consecutive' : 'Double'
 
   // Note: might have missed some cases here when it's from the other cell's perspective
   if (index >= 3 * (constraints.rowCount + 4) * (constraints.colCount + 4) + cellToIndex({ row: 0, col: 0 }, constraints)) {
@@ -356,7 +356,7 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     symbol: fromPairs([
       ...(constraints.kropkiDots ?? []).map((dot) => [
         kropkiDotToIndex(dot, auxConstraints),
-        [dot.dotType === KropkiDotType.Consecutive ? 8 : 2, 'circle_SS', 2]
+        [dot.dotType === 'Consecutive' ? 8 : 2, 'circle_SS', 2]
       ]),
       ...(constraints.oddCells ?? []).map((cell) => [
         cellToIndex(cell, auxConstraints),

@@ -2,7 +2,6 @@ import { expect, test } from 'vitest'
 import { PenpaConstraints } from './types';
 import { transformer } from './transformer';
 import { LisudokuConstraints } from '../lisudoku';
-import { KropkiDotType } from '../lisudoku/types';
 import { decodeSudoku } from '../../decodeSudoku';
 import { isEmpty } from 'lodash-es';
 
@@ -141,11 +140,11 @@ const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
   ],
   killerCages: [{"sum":22,"region":[{"row":2,"col":0},{"row":2,"col":1},{"row":3,"col":0},{"row":3,"col":1},{"row":4,"col":0},{"row":4,"col":1}]}],
   kropkiDots:[
-    {dotType: KropkiDotType.Consecutive, cell1:{"row":7,"col":3},cell2:{"row":8,"col":3}},
-    {dotType: KropkiDotType.Consecutive, cell1:{"row":8,"col":3},cell2:{"row":8,"col":4}},
-    {dotType: KropkiDotType.Consecutive, cell1:{"row":8,"col":5},cell2:{"row":8,"col":4}},
-    {dotType: KropkiDotType.Double, cell1:{"row":8,"col":6},cell2:{"row":8,"col":7}},
-    {dotType: KropkiDotType.Double, cell1:{"row":8,"col":8},"cell2":{"row":8,"col":7}},
+    {dotType: 'Consecutive', cell1:{"row":7,"col":3},cell2:{"row":8,"col":3}},
+    {dotType: 'Consecutive', cell1:{"row":8,"col":3},cell2:{"row":8,"col":4}},
+    {dotType: 'Consecutive', cell1:{"row":8,"col":5},cell2:{"row":8,"col":4}},
+    {dotType: 'Double', cell1:{"row":8,"col":6},cell2:{"row":8,"col":7}},
+    {dotType: 'Double', cell1:{"row":8,"col":8},"cell2":{"row":8,"col":7}},
   ],
   primaryDiagonal: true,
   secondaryDiagonal: true,
@@ -234,22 +233,22 @@ const LISUDOKU_CONSTRAINTS_3: LisudokuConstraints = {
     {
       cell1: { row: 2, col: 6 },
       cell2: { row: 3, col: 6 },
-      dotType: KropkiDotType.Consecutive,
+      dotType: 'Consecutive',
     },
     {
       cell1: { row: 5, col: 2 },
       cell2: { row: 6, col: 2 },
-      dotType: KropkiDotType.Consecutive,
+      dotType: 'Consecutive',
     },
     {
       cell1: { row: 2, col: 2 },
       cell2: { row: 2, col: 3 },
-      dotType: KropkiDotType.Consecutive,
+      dotType: 'Consecutive',
     },
     {
       cell1: { row: 6, col: 5 },
       cell2: { row: 6, col: 6 },
-      dotType: KropkiDotType.Consecutive,
+      dotType: 'Consecutive',
     },
   ],
 }

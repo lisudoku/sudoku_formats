@@ -2,7 +2,6 @@ import { expect, test } from 'vitest'
 import { FpuzzlesConstraints } from './types';
 import { transformer } from './transformer';
 import { LisudokuConstraints } from '../lisudoku';
-import { KropkiDotType } from '../lisudoku/types';
 import { decodeSudoku } from '../../decodeSudoku';
 
 const FPUZZLES_CONSTRAINTS: FpuzzlesConstraints = {
@@ -124,10 +123,10 @@ const LISUDOKU_CONSTRAINTS: LisudokuConstraints = {
   ],
   killerCages: [{"sum":22,"region":[{"row":2,"col":0},{"row":2,"col":1},{"row":3,"col":0},{"row":3,"col":1},{"row":4,"col":0},{"row":4,"col":1}]}],
   kropkiDots:[
-    {dotType: KropkiDotType.Consecutive, cell1:{"row":8,"col":3},cell2:{"row":8,"col":4}},
-    {dotType: KropkiDotType.Consecutive, cell1:{"row":8,"col":5},cell2:{"row":8,"col":4}},
-    {dotType: KropkiDotType.Double, cell1:{"row":8,"col":6},cell2:{"row":8,"col":7}},
-    {dotType: KropkiDotType.Double, cell1:{"row":8,"col":8},"cell2":{"row":8,"col":7}},
+    {dotType: 'Consecutive', cell1:{"row":8,"col":3},cell2:{"row":8,"col":4}},
+    {dotType: 'Consecutive', cell1:{"row":8,"col":5},cell2:{"row":8,"col":4}},
+    {dotType: 'Double', cell1:{"row":8,"col":6},cell2:{"row":8,"col":7}},
+    {dotType: 'Double', cell1:{"row":8,"col":8},"cell2":{"row":8,"col":7}},
   ],
   primaryDiagonal: true,
   secondaryDiagonal: true,

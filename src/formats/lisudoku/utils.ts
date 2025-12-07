@@ -1,5 +1,6 @@
+import type { CellPosition, Region } from 'lisudoku-solver';
 import { camelCase, flatten, flattenDeep, isBoolean, isEmpty, isEqual, isNumber, omitBy, times } from 'lodash-es'
-import { CellPosition, Grid, LisudokuConstraints, Region, SudokuVariant } from './types'
+import { Grid, LisudokuConstraints, SudokuVariant } from './types'
 
 // TODO: deduplicate copy-pasted code from lisudou_frontend
 

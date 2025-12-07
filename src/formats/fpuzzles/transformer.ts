@@ -1,11 +1,11 @@
 import { flatMap, isEmpty, minBy, times } from 'lodash-es'
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
-import { CellPosition, FixedNumber, KropkiDot, KropkiDotType, Region } from '../lisudoku/types'
 import { ensureDefaultRegions, GRID_SIZES, normalizeConstraints, regionGridToRegions, regionsToRegionGrid } from '../lisudoku/utils'
 import { FpuzzlesConstraints, Grid as FGrid } from './types'
 import { encoder as fpuzzlesEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
+import type { CellPosition, FixedNumber, KropkiDot, Region } from 'lisudoku-solver'
 
 const FPUZZLES_UNIMPLEMENTED_CONSTRAINTS: string[] = [
   'disjointgroups', 'littlekillersum', 'minimum', 'maximum',
@@ -72,7 +72,7 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
       continue
     }
     const dot: KropkiDot = {
-      dotType: KropkiDotType.Consecutive,
+      dotType: 'Consecutive',
       cell1: cellStringToObject(cells[0]),
       cell2: cellStringToObject(cells[1]),
     }
@@ -84,7 +84,7 @@ const transformToLisudoku = (constraints: FpuzzlesConstraints): TransformOutput<
       continue
     }
     const dot: KropkiDot = {
-      dotType: KropkiDotType.Double,
+      dotType: 'Double',
       cell1: cellStringToObject(cells[0]),
       cell2: cellStringToObject(cells[1]),
     }
@@ -178,13 +178,13 @@ const transformFromLisudoku = (constraints: LisudokuConstraints): TransformOutpu
     antiknight: constraints.antiKnight,
     antiking: constraints.antiKing,
     difference: constraints.kropkiDots
-      ?.filter(({ dotType }) => dotType === KropkiDotType.Consecutive)
+      ?.filter(({ dotType }) => dotType === 'Consecutive')
       .map(({ cell1, cell2 }) => ({
         cells: [cellObjectToString(cell1), cellObjectToString(cell2)],
         // value ignored, not implemented
       })),
     ratio: constraints.kropkiDots
-      ?.filter(({ dotType }) => dotType === KropkiDotType.Double)
+      ?.filter(({ dotType }) => dotType === 'Double')
       .map(({ cell1, cell2 }) => ({
         cells: [cellObjectToString(cell1), cellObjectToString(cell2)],
         // value ignored, not implemented

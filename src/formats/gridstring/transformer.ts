@@ -1,9 +1,10 @@
 import { Transformer, TransformOutput } from '../../types'
 import { LisudokuConstraints } from '../lisudoku'
-import { FixedNumber, Grid, SudokuVariant } from '../lisudoku/types'
+import { Grid, SudokuVariant } from '../lisudoku/types'
 import { detectVariant, GRID_SIZES, normalizeConstraints } from '../lisudoku/utils'
 import { encoder as gridStringEncoder } from './encoder'
 import { encoder as lisudokuEncoder } from '../lisudoku/encoder'
+import type { FixedNumber } from 'lisudoku-solver'
 
 const gridSizeFromString: (gridString: string) => number = (gridString: string) => (
   Math.sqrt(gridString.length)
