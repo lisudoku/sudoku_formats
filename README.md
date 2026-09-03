@@ -2,7 +2,9 @@
 
 Convert between different sudoku formats (lisudoku, fpuzzles, penpa).
 
-See it in action on the [lisudoku solver](http://lisudoku.xyz/solver) page through the import button.
+See it in action on the [lisudoku solver](http://lisudoku.xyz/solver) page through the import/export buttons.
+
+Or a version for developers at https://lisudoku.github.io/sudoku_formats/.
 
 ## Install
 
