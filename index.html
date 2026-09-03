@@ -3,8 +3,30 @@
   <head>
     <meta charset="utf-8"/>
     <title>Sudoku formats</title>
+    <script type="module">
+      import { decodeSudoku } from './lib/index.mjs'
+
+      document.getElementById('run').addEventListener('click', (e) => {
+        const inputValue = document.getElementById('input').value
+        decodeSudoku(inputValue).then((result) => {
+          document.getElementById('output').value = JSON.stringify(result, null, 2)
+        })
+      })
+    </script>
   </head>
-  <body>
+  <body style="padding-right: 10px; display: flex; flex-direction: column; gap: 10px;">
     <h1>Sudoku formats</h1>
+
+    <div>
+      <label for="input">Input</label>
+      <input type="text" id="input" style="width: 100%" />
+    </div>
+
+    <button id="run">Decode</button>
+
+    <div>
+      <label for="output">Result</label>
+      <textarea id="output" style="width: 100%; min-height: 400px" readonly></textarea>
+    </div>
   </body>
 </html>
