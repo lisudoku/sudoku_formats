@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Encode sudoku formats</title>
+    <script type="module">
+      import { encodeSudoku } from './lib/index.mjs'
+
+      document.getElementById('encode').addEventListener('click', (e) => {
+        const inputValue = document.getElementById('input').value
+        const format = document.getElementById('format').value
+        const constraints = JSON.parse(inputValue)
+        const result = encodeSudoku({ constraints, format })
+        console.log(result)
+        document.getElementById('output').value = result.dataString
+        document.getElementById('url').href = result.url
+        document.getElementById('url').textContent = result.url
+      })
+    </script>
+  </head>
+  <body style="padding-right: 10px; display: flex; flex-direction: column; gap: 10px;">
+    <a href="./index.html">Back</a>
+
+    <h1>Encode</h1>
+
+    <div>
+      <label for="input">Input</label>
+      <textarea id="input" style="width: 100%; min-height: 400px"></textarea>
+    </div>
+
+    <select id="format">
+      <option value="lisudoku">lisudoku</option>
+      <option value="gridstring">grid string</option>
+      <option value="fpuzzles">fpuzzles</option>
+      <option value="penpa">penpa</option>
+    </select>
+
+    <button id="encode">Encode</button>
+
+    <div>
+      <label for="output">Result</label>
+      <input type="text" id="output" style="width: 100%" readonly />
+      <a id="url">url</a>
+    </div>
+  </body>
+</html>
