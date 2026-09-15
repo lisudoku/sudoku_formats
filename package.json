@@ -40,6 +40,7 @@
     "build": "tsc",
     "build:browser": "vite build",
     "test": "vitest run",
-    "deploy:website": "yarn build:browser && gh-pages -d website"
+    "deploy:website": "yarn build:browser && gh-pages -d website",
+    "run:website": "npx serve website -p 3001"
   }
 }
