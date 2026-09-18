@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Sudoku formats - redirect</title>
+    <script type="module">
+      import { encodeSudoku } from './lib/index.mjs'
+
+      const params = new URLSearchParams(window.location.search)
+      const constraintsString = params.get('constraints')
+      if (constraintsString === null) {
+        throw new Error('empty constraints parameter')
+      }
+      const constraints = JSON.parse(constraintsString)
+      const result = encodeSudoku({ constraints, format: 'lisudoku' })
+
+      let redirectTo = result.url
+      if (params.get('redirect_url') !== null) {
+        redirectTo = params.get('redirect_url') + result.dataString
+      }
+      window.location.href = redirectTo
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

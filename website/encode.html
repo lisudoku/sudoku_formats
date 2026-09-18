@@ -11,7 +11,6 @@
         const format = document.getElementById('format').value
         const constraints = JSON.parse(inputValue)
         const result = encodeSudoku({ constraints, format })
-        console.log(result)
         document.getElementById('output').value = result.dataString
         document.getElementById('url').href = result.url
         document.getElementById('url').textContent = result.url
